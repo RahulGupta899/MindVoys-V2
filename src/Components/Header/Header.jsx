@@ -18,6 +18,7 @@ import {Link, NavLink} from 'react-router-dom'
 import Filter from './Filter'
 import {FilterContext} from './FilterContext'
 import Test from './Test'
+import Footer from '../Footer/Footer'
 
 function Header({Children}){ 
 
@@ -65,7 +66,8 @@ function Header({Children}){
 
     return(
         <>
-            <AppBar>
+
+            {/* <AppBar>
                 <Toolbar>
                     <IconButton size='large' edge='start' color='inherit' aria-label='logo'>
                         <CatchingPokemon/>
@@ -98,6 +100,64 @@ function Header({Children}){
                     
                     
                 </Toolbar>
+            </AppBar> */}
+            
+            {/* APPBAR */}
+            <AppBar className="nav_sec" id="sticky-wrap">
+                <Toolbar className='nav_inner'>
+                    <div className='logo_area'>
+                       <NavLink> <img src="images/logo.png" alt="" /></NavLink>
+                    </div>
+                    <div className='nav_area'>
+                        <ul>
+                            <li>
+                                <NavLink  to='/dashboard'>
+                                    <span className='nav_item_icon'>
+                                        <img src="images/menu_icon_dashboard.png" />
+                                    </span>
+                                    <span className='nav_name'>Dashboard</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink  to='/scorecard'>
+                                <span className='nav_item_icon'>
+                                    <img src="images/menu_icon_scorecard.png" />
+                                </span>
+                                <span className='nav_name'>Scorecard</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink  to='/transcriptions'>
+                                <span className='nav_item_icon'>
+                                    <img src="images/menu_icon_transcription.png" />
+                                </span>
+                                <span className='nav_name'>Transcriptions</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink  to='/configuration'>
+                                    <span className='nav_item_icon'>
+                                        <img src="images/menu_icon_config.png" />
+                                    </span>
+                                    <span className='nav_name'>Configuration</span>
+                                </NavLink>
+                            </li>
+                        </ul>
+                    </div>
+                    <div className='header_right'>
+                        <div className='filter_btn_box'  onClick={()=>{setIsDrawerOpen(true)}}>
+                            <FilterAltIcon 
+                                color='inherit'
+                                sx={{marginRight:'3px'}}/>
+                                Filter
+                        </div>
+                        <div className="logged_user">
+                            <div className='logged_circle'>
+                                <img src='images/user_img1.jpg' />
+                            </div>
+                        </div>
+                    </div>
+                </Toolbar>
             </AppBar>
 
 
@@ -116,9 +176,11 @@ function Header({Children}){
             </Drawer>
 
             {/* Tab content */}
-            <Box sx={{margin:'70px 0'}}>
+            <Box className="page_body">
                 {Children}
             </Box>
+
+            <Footer/>
 
         </>
     )
