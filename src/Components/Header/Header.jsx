@@ -15,12 +15,17 @@ import { CatchingPokemon } from '@mui/icons-material'
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import {useState} from 'react'
 import {Link, NavLink} from 'react-router-dom'
+import Filter from './Filter'
+import {FilterContext} from './FilterContext'
+import Test from './Test'
 
 function Header({Children}){ 
 
     const [anchorEl, setAnchorEl] = useState(null)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-    const [callDuration, setCallDuration] = useState(20)
+
+
+
     const open = Boolean(anchorEl)
     const handleClick = (e)=>{
         setAnchorEl(e.target)
@@ -28,6 +33,35 @@ function Header({Children}){
     const handleClose = ()=>{
         setAnchorEl(null)
     }
+
+
+
+    //Filter states
+    const [dateRange,setDateRange]          = useState([new Date(), new Date()])
+    const [l2Manager, setL2Manager]         = useState([])
+    const [l1Manager, setL1Manager]         = useState([])
+    const [agentName, setAgentName]         = useState([])
+    const [tenure, setTenure]               = useState([])
+    const [section, setSection]             = useState([])
+    const [tagName, setTagName]             = useState([])
+    const [callDuration,setCallDuration]    = useState([20,38])
+    const [age,setAge]                      = useState("")
+
+    console.log("Call Duration: ",callDuration)
+
+    const value = {
+        dateRange, setDateRange,
+        l2Manager, setL2Manager,
+        l1Manager, setL1Manager,
+        agentName, setAgentName,
+        tenure, setTenure,
+        section, setSection, 
+        tagName, setTagName,
+        callDuration, setCallDuration,
+        age,setAge
+    }
+    console.log("Filter States: ",value)
+    
 
     return(
         <>
@@ -66,21 +100,26 @@ function Header({Children}){
                 </Toolbar>
             </AppBar>
 
+
+            {/* FILTER PANEL */}
             <Drawer
                 anchor = 'right'
                 open={isDrawerOpen}
                 onClose = {()=> {setIsDrawerOpen(false)}}
+                
             >
-                <Box p={2} width='250px' textAlign='center' role='presentation'>
-                    <Typography variant='h6' component='div'>Side Panel</Typography>
-                    <TextField value={callDuration} onChange={(e)=> {setCallDuration(e.target.value)}} />
-                    <Button size='sm' onClick={handleClick}> Apply </Button>
-                    <Typography disable sx={{marginTop:'30px'}} variant='body1'> Calls Should be Greater than <br/> {`${callDuration} mins`}</Typography>
+                <Box p={2} width="320px" textAlign='center' role='presentation'>
+                    <FilterContext.Provider value={value}>
+                        <Filter/>
+                    </FilterContext.Provider>
                 </Box>
             </Drawer>
-            <Box sx={{margin:'500px'}}>
+
+            {/* Tab content */}
+            <Box sx={{margin:'70px 0'}}>
                 {Children}
             </Box>
+
         </>
     )
 }
