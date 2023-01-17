@@ -1,23 +1,25 @@
 import React,{useContext} from 'react'
 import { FilterContext } from './FilterContext'
+import CloseIcon from '@mui/icons-material/Close';
 import {
     Box,
     Typography,
     Stack,
-    TextField,
     MenuItem,
     Button,
     FormControl,
     InputLabel,
     Select
 } from '@mui/material'
-import {DateRangePicker} from 'rsuite'
 import RangePicker from './RangePicker'
-import moment from 'moment'
+import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import {formatName} from '../../Helper/helper'
 
 
 
 const Filter = ()=>{
+    console.log("##### Filter component Re-render #####")
+    
     const {
         dateRange,setDateRange,
         l1Manager,setL1Manager,
@@ -26,42 +28,59 @@ const Filter = ()=>{
         tenure, setTenure,
         section, setSection,
         tagName, setTagName,
-        callDuration,
-        age,setAge
+        callDuration,setCallDuration,
+        setIsDrawerOpen,
+        employeeDetails,
+        setAnalytics,
+        setController,
+        fetchDashBoardAnalytics
     } = useContext(FilterContext)
 
-    const handleDateRangeChange = (dates)=>{
-        console.log("DATES: ",dates)
-        setDateRange(dates)  
+    // ON APPLY BUTTON
+    const handleApplyFilters = ()=>{
+        fetchDashBoardAnalytics()
+        setIsDrawerOpen(false)
     }
-    
-    return(
-        <Box>
-            <Typography sx={{marginBottom: '30px'}}>Filter Search</Typography>
-            <Stack spacing={2}>
 
+    // ON CLEAR BUTTON
+    const handleClearFilters = ()=>{
+        setDateRange(setDateRange.backup)
+        setL2Manager([])
+        setL1Manager([])
+        setAgentName([])
+        setTenure([])
+        setSection([])
+        setTagName([])
+        setCallDuration([0,60])
+        setAnalytics(setController.analyticsBackup)
+        setIsDrawerOpen(false)
+    }
+
+    return(
+        <Box className='filter_form_style'>
+
+            <div className='side_filter_head'>
+                <h3>Filter Search</h3>
+                <Button className='filter_apply_btn' color='error' variant="contained" onClick={handleClearFilters}>CLEAR</Button>
+                <div className='f_close'><CloseIcon onClick={()=>{setIsDrawerOpen(false)}}/></div>
+            </div>
+
+            <Stack spacing={2}>
+                
                 {/* DATEPICKER */}
                 <DateRangePicker 
                     value={dateRange} 
-                    onChange={handleDateRangeChange}
-                    format = "yyyy-MM-dd"
-                    renderValue={(value)=>{
-
-                        const startDateMoment = moment(value[0]).format('DD-MMM-YYYY')
-                        const endDateMoment = moment(value[1]).format('DD-MMM-YYYY')
-                        
-
-                        return `${startDateMoment} --- ${endDateMoment} `
-                    }}
+                    onChange={(dates)=>{setDateRange(dates)}}
+                    format="dd-MM-y"
+                    rangeDivider="~"
                 />
-                
-                
 
 
                 {/* L2 MANAGER */}
                 <FormControl fullWidth>
                 <InputLabel id="l2Manager">L2 Manager</InputLabel>
                 <Select
+                    className='form_control'
                     multiple
                     labelId="l2Manager"
                     id="l2Manager"
@@ -69,18 +88,20 @@ const Filter = ()=>{
                     label="L2 Manager"
                     onChange={(e)=>{setL2Manager(e.target.value)}}
                 >
-                    <MenuItem value="Kiran Suryavansi">Kiran Suryavansi</MenuItem>
-                    <MenuItem value="Anurag Bose">Anurag Bose</MenuItem>
-                    <MenuItem value="Shreya Bask">Shreya Bask</MenuItem>
-                    <MenuItem value="Hitesh Raj">Hitesh Raj</MenuItem>
-                    <MenuItem value="Lata Sheikh">Lata Sheikh</MenuItem>
+                    {   employeeDetails.l2Managers.length>0
+                        &&
+                        employeeDetails.l2Managers.map((item,idx)=>{
+                            return <MenuItem value={item.l2SupervisorId+","+item.l2SupervisorName} key={idx}>{item.l2SupervisorName}</MenuItem>
+                        })
+                    }
                 </Select>
                 </FormControl>
+
 
                 {/* L1 MANAGER */}
                 <FormControl fullWidth>
                 <InputLabel id="l1Manager">L1 Manager</InputLabel>
-                <Select
+                <Select className='form_control'
                     multiple
                     labelId="l1Manager"
                     id="l1Manager"
@@ -88,21 +109,31 @@ const Filter = ()=>{
                     label="L1 Manager"
                     onChange={(e)=>{setL1Manager(e.target.value)}}
                 >
-                    <MenuItem value="Hussain Verma">Hussain Verma</MenuItem>
-                    <MenuItem value="Simran Deb">Simran Deb</MenuItem>
-                    <MenuItem value="Rajay Bask">Rajay Bask</MenuItem>
-                    <MenuItem value="Chirag Jaiswal">Chirag Jaiswal</MenuItem>
-                    <MenuItem value="Anand Prakash">Anand Prakash</MenuItem>
-                    <MenuItem value="Bipasha Bose">Bipasha Bose</MenuItem>
-                    <MenuItem value="Rakesh Gupta">Rakesh Gupta</MenuItem>
-                    <MenuItem value="Shikha Sharma">Shikha Sharma</MenuItem>
+                    {
+                        (l2Manager.length>0)
+                        ?
+                            l2Manager.map((l2Supervisor)=>{
+                                l2Supervisor = l2Supervisor.split(",");
+                                const l2SupervisorId = l2Supervisor[0];
+                                const l2SupervisorName = l2Supervisor[1];
+
+                                const l1Supervisors = employeeDetails.employees[l2SupervisorId]
+                                const data = l1Supervisors.map((item,idx)=>{
+                                    return  <MenuItem value={item.l1SupervisorId+","+formatName(item.l1SupervisorName+"      ")} key={idx}>{item.l1SupervisorName}</MenuItem>
+                                })
+                                data.unshift(<Typography className='selected_title' variant='body' sx={{margin:'4px',background:'#dadce7'}}>Under L2 {formatName(l2SupervisorName)}</Typography>)
+                                return data
+                            })
+                        :
+                        <MenuItem>Select L2 Manager</MenuItem>
+                    }
                 </Select>
                 </FormControl>
 
                 {/* AGENT */}
                 <FormControl fullWidth>
                 <InputLabel id="agent">Agent</InputLabel>
-                <Select
+                <Select className='form_control'
                     multiple
                     labelId="agent"
                     id="agent"
@@ -110,33 +141,32 @@ const Filter = ()=>{
                     label="Agent"
                     onChange={(e)=>{setAgentName(e.target.value)}}
                 >
-                    <MenuItem value="Shital Verma">Shital Verma</MenuItem>
-                    <MenuItem value="Jay Deb">Jay Deb</MenuItem>
-                    <MenuItem value="Rahul Gupta">Rahul Gupta</MenuItem>
-                    <MenuItem value="Naman Ojha">Naman Ojha</MenuItem>
-                    <MenuItem value="Meghna Sharma">Meghna Sharma</MenuItem>
-                    <MenuItem value="Bipasha Verma">Bipasha Verma</MenuItem>
-                    <MenuItem value="Ujwal Gupta"> Ujwal Gupta</MenuItem>
-                    <MenuItem value="Denny Dale">Denny Dale</MenuItem>
-                    <MenuItem value="Pooja Sharma">Pooja Sharma</MenuItem>
-                    <MenuItem value="Tejas Verma">Tejas Verma</MenuItem>
-                    <MenuItem value="Aditya Gupta">Aditya Gupta</MenuItem>
-                    <MenuItem value="Kirtan Sharma">Kirtan Sharma</MenuItem>
-                    <MenuItem value=" Sharma">Meghna Sharma</MenuItem>
-                    <MenuItem value="ddk Verma">Bipasha Sha</MenuItem>
-                    <MenuItem value="fjk Gupta">Pratap Gupta</MenuItem>
-                    <MenuItem value="ddkf Dale">Siram Dale</MenuItem>
-                    <MenuItem value="ji Sharma">Alka Sharma</MenuItem>
-                    <MenuItem value="fida Verma">Shivani Verma</MenuItem>
-                    <MenuItem value="hi Gupta">Preeti Gupta</MenuItem>
-                    <MenuItem value="kim Sharma">Suresh Sharma</MenuItem>
+                    {
+                        (l1Manager.length>0)
+                        ?
+                            l1Manager.map((l1Supervisor)=>{
+                                l1Supervisor = l1Supervisor.split(",");
+                                const l1SupervisorId = l1Supervisor[0];
+                                const l1SupervisorName = l1Supervisor[1];
+
+                                const agents = employeeDetails.employees[l1SupervisorId]
+                                console.log("AGENTS: ",agents)
+                                const data = agents.map((item,idx)=>{
+                                    return  <MenuItem value={item.agentId+","+formatName(item.name)} key={idx}>{item.name}</MenuItem>
+                                })
+                                data.unshift(<Typography className='selected_title' variant='body' sx={{margin:'4px',background:'#dadce7'}}>Under L1 {formatName(l1SupervisorName)}</Typography>)
+                                return data
+                            })
+                        :
+                        <MenuItem>Select L1 Manager</MenuItem>
+                    }
                 </Select>
                 </FormControl>
 
                 {/* TENURE */}
                 <FormControl fullWidth>
                 <InputLabel id="tenure">Tenure</InputLabel>
-                <Select
+                <Select className='form_control'
                     multiple
                     labelId="tenure"
                     id="tenure"
@@ -152,9 +182,8 @@ const Filter = ()=>{
                     <MenuItem value="271-365">271-365 Days</MenuItem>
                     <MenuItem value=">365">{`>365 Days`}</MenuItem>
                 </Select>
-                </FormControl> 
+                </FormControl>
 
-                <hr/> 
                 {/* CALL DURATION */}
                 <Box>
                     <Stack direction="row">
@@ -163,19 +192,18 @@ const Filter = ()=>{
                     </Stack>
                     <RangePicker/>
                 </Box>
-                <hr/>
-                
+
                 {/* SECTION */}
-                
                 <FormControl fullWidth>
-                <InputLabel id="section">Section</InputLabel>
-                <Select
+                <InputLabel disabled={true} id="section">Section</InputLabel>
+                <Select className='form_control'
                     multiple
                     labelId="section"
                     id="section"
                     value={section}
                     label="Section"
                     onChange={(e)=>{setSection(e.target.value)}}
+                    disabled={true}
                 >
                     <MenuItem value="0-30">Opening</MenuItem>
                     <MenuItem value="31-60">Closing</MenuItem>
@@ -184,18 +212,19 @@ const Filter = ()=>{
                     <MenuItem value="181-270">Issues</MenuItem>
                     <MenuItem value="271-365">Access</MenuItem>
                 </Select>
-                </FormControl>  
-
+                </FormControl>
+                
                 {/* TAG NAME */}
                 <FormControl fullWidth>
-                <InputLabel id="tagName">Tag Name</InputLabel>
-                <Select
+                <InputLabel disabled={true} id="tagName">Tag Name</InputLabel>
+                <Select className='form_control'
                     multiple
                     labelId="tagName"
                     id="tagName"
                     value={tagName}
                     label="Tag Name"
                     onChange={(e)=>{setTagName(e.target.value)}}
+                    disabled={true}
                 >
                     <MenuItem value="0-30">Bank Cheque</MenuItem>
                     <MenuItem value="31-60">Transaction</MenuItem>
@@ -209,15 +238,14 @@ const Filter = ()=>{
                     <MenuItem value="5">Commercial</MenuItem>
                     <MenuItem value="4">Emotions</MenuItem>
                 </Select>
-                </FormControl> 
+                </FormControl>
 
-                {/* APPLY BUTTON */}
-                <Button variant="contained">APPLY</Button>
-                         
-            
+                {/* BUTTON */}
+                <Button className='blue_btn filter_apply_btn'  variant="contained" onClick={handleApplyFilters}>APPLY</Button>
+                
+
             </Stack>
         </Box>
     )
 }
-
 export default Filter

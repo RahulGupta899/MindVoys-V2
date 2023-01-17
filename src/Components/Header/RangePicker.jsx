@@ -4,7 +4,7 @@ import Slider from '@mui/material/Slider';
 import {FilterContext} from './FilterContext'
 
 
-const minDistance = 10;
+const minDistance = 0;
 
 function RangePicker() {
     
@@ -30,7 +30,7 @@ function RangePicker() {
   };
 
   return (
-    <Box sx={{ }}>
+    <Box >
       
       <Slider
         max={60}

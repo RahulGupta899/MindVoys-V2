@@ -5,3 +5,13 @@
     right: 0;
     left: auto !important;
 }
+.react-daterange-picker__calendar
+{
+    background-color: #fff !important;
+    z-index: 2 !important;
+    position: absolute;
+}
+.date-picker-custom-style{
+    height:'40px' !important;
+    marginBottom:'10px' !important;
+}

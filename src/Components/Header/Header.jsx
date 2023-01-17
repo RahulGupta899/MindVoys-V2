@@ -1,54 +1,64 @@
+import React,{useState,useEffect} from 'react'
+import {NavLink} from 'react-router-dom'
+import axios from 'axios'
 import {
     AppBar,
     Toolbar,
-    IconButton,
-    Typography,
-    Stack,
-    Button,
-    Menu,
-    MenuItem,
     Drawer,
-    Box,
-    TextField
+    Box
 } from '@mui/material'
-import { CatchingPokemon } from '@mui/icons-material'
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import {useState} from 'react'
-import {Link, NavLink} from 'react-router-dom'
+
 import Filter from './Filter'
 import {FilterContext} from './FilterContext'
-import Test from './Test'
 import Footer from '../Footer/Footer'
+import {API_EndPoints} from '../../Helper/API_EndPoints'
+
 
 function Header({Children}){ 
 
-    const [anchorEl, setAnchorEl] = useState(null)
+
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
+    //FILTER STATES
+    const [dateRange,setDateRange]              = useState([new Date(), new Date()])
+    const [l2Manager, setL2Manager]             = useState([])
+    const [l1Manager, setL1Manager]             = useState([])
+    const [agentName, setAgentName]             = useState([])
+    const [tenure, setTenure]                   = useState([])
+    const [section, setSection]                 = useState([])
+    const [tagName, setTagName]                 = useState([])
+    const [callDuration,setCallDuration]        = useState([0,60])
+    const [employeeDetails,setEmployeeDetails]  = useState(null)
+
+    const [controller,setController]            = useState(null)     // FOR USE-EFFECT
+                                                                     // ATTACHED setController.analyticsBackup 
+    
+    //DASHBOARD STATES
+    const [analytics,setAnalytics] = useState(null)
 
 
-    const open = Boolean(anchorEl)
-    const handleClick = (e)=>{
-        setAnchorEl(e.target)
+    // Memoize this function 
+    const fetchDashBoardAnalytics = async()=>{
+        setAnalytics(null)
+        const {API_POST_calls_QS_AHT_AgentCount} = API_EndPoints
+        const options = {dateRange,l2Manager,l1Manager,agentName,tenure,callDuration}
+        const {data} = await axios.post(API_POST_calls_QS_AHT_AgentCount,options)
+        console.log("Filtered Analytics: ",data)
+        setAnalytics(data.analytics)
+        
+        // Logic to ATTACH the initial Dashboard Analytics to setController
+        if(controller === null){
+            setController.analyticsBackup = "DATA"
+        }
+        else if(setController.analyticsBackup === "DATA" ){
+            setController.analyticsBackup = data.analytics
+        }
+
+        setController(true)
     }
-    const handleClose = ()=>{
-        setAnchorEl(null)
-    }
 
 
-
-    //Filter states
-    const [dateRange,setDateRange]          = useState([new Date(), new Date()])
-    const [l2Manager, setL2Manager]         = useState([])
-    const [l1Manager, setL1Manager]         = useState([])
-    const [agentName, setAgentName]         = useState([])
-    const [tenure, setTenure]               = useState([])
-    const [section, setSection]             = useState([])
-    const [tagName, setTagName]             = useState([])
-    const [callDuration,setCallDuration]    = useState([20,38])
-    const [age,setAge]                      = useState("")
-
-    console.log("Call Duration: ",callDuration)
 
     const value = {
         dateRange, setDateRange,
@@ -59,49 +69,57 @@ function Header({Children}){
         section, setSection, 
         tagName, setTagName,
         callDuration, setCallDuration,
-        age,setAge
+        setIsDrawerOpen,
+        employeeDetails,
+        setAnalytics,
+        fetchDashBoardAnalytics,
+        setController
     }
-    console.log("Filter States: ",value)
+    // console.log("Filters: ",value)
+
+
+
+
+
+
+
+
+
+    useEffect(() => {
+        
+      const {
+        API_GET_OldestAndNewestDates,
+        API_GET_EmployeeList
+      } = API_EndPoints
+
+      const fetchDates = async()=>{
+        const {data} = await axios.get(API_GET_OldestAndNewestDates)
+        const dates = data.dates
+        const dateRanges = [new Date(dates[0]), new Date(dates[1])]
+        setDateRange(dateRanges)
+        setDateRange.backup = dateRanges          // ATTACHING INITIAL DATES FOR BACKUP
+      }
+      fetchDates()
+
+      const fetchEmployees = async()=>{
+        const {data} = await axios.get(API_GET_EmployeeList)
+        const {employees,l2Managers} = data
+        setEmployeeDetails({employees,l2Managers})
+      }
+      fetchEmployees()
+    }, [])
+
+
+    useEffect(()=>{
+        fetchDashBoardAnalytics()
+    },[controller])
+
+    
     
 
     return(
         <>
 
-            {/* <AppBar>
-                <Toolbar>
-                    <IconButton size='large' edge='start' color='inherit' aria-label='logo'>
-                        <CatchingPokemon/>
-                    </IconButton>
-                    <Typography variant='h6' component='div' sx={{flexGrow:1}} >
-                        MIND VOYS
-                    </Typography>
-                    <Stack direction='row' spacing={2}>
-                        
-                        <Button color='inherit'>
-                            <NavLink  to='/dashboard' style={{color:'white',textDecoration:'none'}}>DashBoard</NavLink>
-                        </Button>
-                        <Button color='inherit'>
-                            <NavLink  to='/scorecard' style={{color:'white',textDecoration:'none'}}>Scorecard</NavLink>
-                        </Button>
-                        <Button color='inherit'>
-                            <NavLink  to='/transcriptions' style={{color:'white',textDecoration:'none'}}>Transcriptions</NavLink>
-                        </Button>
-                        <Button color='inherit'>
-                            <NavLink  to='/configuration' style={{color:'white',textDecoration:'none'}}>Configuration</NavLink>
-                        </Button>
-                        
-                        
-                    </Stack>
-                    <FilterAltIcon 
-                            color='inherit'
-                            onClick={()=>{setIsDrawerOpen(true)}}
-                            sx={{marginLeft:'45px'}}
-                    />
-                    
-                    
-                </Toolbar>
-            </AppBar> */}
-            
             {/* APPBAR */}
             <AppBar className="nav_sec" id="sticky-wrap">
                 <Toolbar className='nav_inner'>
@@ -177,7 +195,7 @@ function Header({Children}){
 
             {/* Tab content */}
             <Box className="page_body">
-                {Children}
+                {React.cloneElement(Children,{analytics})}
             </Box>
 
             <Footer/>
@@ -185,4 +203,6 @@ function Header({Children}){
         </>
     )
 }
+
+
 export default Header
