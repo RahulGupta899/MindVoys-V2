@@ -1,13 +1,34 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import {Loading} from 'react-loading-dot'
 import { Skeleton, Typography } from '@mui/material'
 import DayOnDayGraph from './DayOnDayGraph'
 import ParetoChart from './ParetoChart'
 import TagScore from './TagScore'
+import { API_EndPoints } from '../../Helper/API_EndPoints'
 
 const Dashboard = (props) => {
+    console.log("### DASHBOARD COMPONENT RENDERED ###")
+    const {analytics,value} = props
+    // const {dateRange,l2Manager,l1Manager,agentName,tenure,callDuration} = value
+    // console.log("VALUE: ",value)
 
-    const {analytics} = props
+    // const [dashboardData,setDashboardData] = useState(null)
+
+
+    // useEffect(() => {
+    //   const fetchDashboardInfo = async()=>{
+    //     console.log("DASHBOARD USEEFFECT RENDERED")
+    //     // setAnalytics(null)
+    //     // const {API_POST_calls_QS_AHT_AgentCount} = API_EndPoints
+    //     const options = {dateRange,l2Manager,l1Manager,agentName,tenure,callDuration}
+    //     console.log("OPtions: ",options)
+    //     // const {data} = await axios.post(API_POST_calls_QS_AHT_AgentCount,options)
+    //     // console.log("Filtered Dashboard: ",data)
+    //     // setAnalytics(data.analytics)
+    //   }
+    //   fetchDashboardInfo()
+    // }, [])
+    
 
   return (
     <>

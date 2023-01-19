@@ -32,10 +32,28 @@ function Header({Children}){
     const [employeeDetails,setEmployeeDetails]  = useState(null)
 
     const [controller,setController]            = useState(null)     // FOR USE-EFFECT
-                                                                     // ATTACHED setController.analyticsBackup 
+    const [transController,setTransController]  = useState(false)    // Use effect to take care re-rendring in transcriptions page when apply filters                                                            // ATTACHED setController.analyticsBackup 
     
     //DASHBOARD STATES
     const [analytics,setAnalytics] = useState(null)
+
+
+    // TASKS
+    // 1. SEPARATE DASHBOARD SATES FROM HEADER
+    // 2. APPLY FILTER WILL EXECUTE DURING MOUNTING OF COMPONENTS
+    // 3. MAKE A CONTROLLER STATE FOR APPLY FILTERS THAT IDENTIFIES WHEN TO RE-RENDER COMPONENT
+
+
+
+    
+
+
+
+
+
+
+
+
 
 
     // Memoize this function 
@@ -59,7 +77,6 @@ function Header({Children}){
     }
 
 
-
     const value = {
         dateRange, setDateRange,
         l2Manager, setL2Manager,
@@ -73,7 +90,9 @@ function Header({Children}){
         employeeDetails,
         setAnalytics,
         fetchDashBoardAnalytics,
-        setController
+        controller,
+        setController,
+        transController,setTransController
     }
     // console.log("Filters: ",value)
 
@@ -195,7 +214,7 @@ function Header({Children}){
 
             {/* Tab content */}
             <Box className="page_body">
-                {React.cloneElement(Children,{analytics})}
+                {React.cloneElement(Children,{analytics,value})}
             </Box>
 
             <Footer/>

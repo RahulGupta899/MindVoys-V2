@@ -14,9 +14,6 @@ const TagScore = ({tagScoresData}) => {
                         <Tooltip title={`${tagData.matchCount}/${tagData.count}`} placement="right">
                             <div className="progress-bar bg_green" style={{width: `${tagData.matchPercent}%`}}>{tagData.matchPercent}%</div>
                         </Tooltip>
-                            {/* <div className='tooltip_data'>
-                                {`${tagData.matchCount}/${tagData.count}`}
-                            // </div> */}
                         </div>
                     </div>
                 )

@@ -33,13 +33,15 @@ const Filter = ()=>{
         employeeDetails,
         setAnalytics,
         setController,
-        fetchDashBoardAnalytics
+        fetchDashBoardAnalytics,
+        transController,setTransController
     } = useContext(FilterContext)
 
     // ON APPLY BUTTON
     const handleApplyFilters = ()=>{
         fetchDashBoardAnalytics()
         setIsDrawerOpen(false)
+        setTransController((state)=>!state)
     }
 
     // ON CLEAR BUTTON
@@ -54,6 +56,7 @@ const Filter = ()=>{
         setCallDuration([0,60])
         setAnalytics(setController.analyticsBackup)
         setIsDrawerOpen(false)
+        setTransController((state)=>!state)
     }
 
     return(
