@@ -18,8 +18,8 @@ import {formatName} from '../../Helper/helper'
 
 
 const Filter = ()=>{
-    console.log("##### Filter component Re-render #####")
-    
+
+    // STATES
     const {
         dateRange,setDateRange,
         l1Manager,setL1Manager,
@@ -31,17 +31,14 @@ const Filter = ()=>{
         callDuration,setCallDuration,
         setIsDrawerOpen,
         employeeDetails,
-        setAnalytics,
-        setController,
-        fetchDashBoardAnalytics,
-        transController,setTransController
+        setFilterController
     } = useContext(FilterContext)
+
 
     // ON APPLY BUTTON
     const handleApplyFilters = ()=>{
-        fetchDashBoardAnalytics()
         setIsDrawerOpen(false)
-        setTransController((state)=>!state)
+        setFilterController((state)=>!state)
     }
 
     // ON CLEAR BUTTON
@@ -54,11 +51,11 @@ const Filter = ()=>{
         setSection([])
         setTagName([])
         setCallDuration([0,60])
-        setAnalytics(setController.analyticsBackup)
         setIsDrawerOpen(false)
-        setTransController((state)=>!state)
+        setFilterController((state)=>!state)
     }
 
+    // JSX
     return(
         <Box className='filter_form_style'>
 
@@ -77,7 +74,6 @@ const Filter = ()=>{
                     format="dd-MM-y"
                     rangeDivider="~"
                 />
-
 
                 {/* L2 MANAGER */}
                 <FormControl fullWidth>
@@ -99,7 +95,6 @@ const Filter = ()=>{
                     }
                 </Select>
                 </FormControl>
-
 
                 {/* L1 MANAGER */}
                 <FormControl fullWidth>
@@ -245,9 +240,9 @@ const Filter = ()=>{
 
                 {/* BUTTON */}
                 <Button className='blue_btn filter_apply_btn'  variant="contained" onClick={handleApplyFilters}>APPLY</Button>
-                
-
+        
             </Stack>
+
         </Box>
     )
 }

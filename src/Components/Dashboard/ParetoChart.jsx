@@ -28,14 +28,6 @@ import {
 
 const ParetoChart = ({paretoData}) => {
 
-    console.log("Pareto Data: ",paretoData)
-
-    // const labels = ["Opening","Closing","Customer Handling","Feedback","Payment Due","Product Review"]
-    // const errors = [90,80,70,65,55,45]
-    // const sum = 405
-    // const cumulativeSum = [90,170,240,305,360,405]
-    // const cumulativePercentage = [22.22,41.97,59.25,75.30,88.88,100]
-
 
     const labels = paretoData.parameters
     const errors = paretoData.errors

@@ -17,10 +17,10 @@ import {API_EndPoints} from '../../Helper/API_EndPoints'
 
 function Header({Children}){ 
 
-
+    // SIDE PANEL
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-    //FILTER STATES
+    // FILTER STATES
     const [dateRange,setDateRange]              = useState([new Date(), new Date()])
     const [l2Manager, setL2Manager]             = useState([])
     const [l1Manager, setL1Manager]             = useState([])
@@ -31,52 +31,10 @@ function Header({Children}){
     const [callDuration,setCallDuration]        = useState([0,60])
     const [employeeDetails,setEmployeeDetails]  = useState(null)
 
-    const [controller,setController]            = useState(null)     // FOR USE-EFFECT
-    const [transController,setTransController]  = useState(false)    // Use effect to take care re-rendring in transcriptions page when apply filters                                                            // ATTACHED setController.analyticsBackup 
-    
-    //DASHBOARD STATES
-    const [analytics,setAnalytics] = useState(null)
+    // FILTER CONTROLLER (TO RE-RENDER COMPONENTS AFTER APPLYING FILTERS)                                                      
+    const [filterController,setFilterController] = useState(false)
 
-
-    // TASKS
-    // 1. SEPARATE DASHBOARD SATES FROM HEADER
-    // 2. APPLY FILTER WILL EXECUTE DURING MOUNTING OF COMPONENTS
-    // 3. MAKE A CONTROLLER STATE FOR APPLY FILTERS THAT IDENTIFIES WHEN TO RE-RENDER COMPONENT
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    // Memoize this function 
-    const fetchDashBoardAnalytics = async()=>{
-        setAnalytics(null)
-        const {API_POST_calls_QS_AHT_AgentCount} = API_EndPoints
-        const options = {dateRange,l2Manager,l1Manager,agentName,tenure,callDuration}
-        const {data} = await axios.post(API_POST_calls_QS_AHT_AgentCount,options)
-        console.log("Filtered Analytics: ",data)
-        setAnalytics(data.analytics)
-        
-        // Logic to ATTACH the initial Dashboard Analytics to setController
-        if(controller === null){
-            setController.analyticsBackup = "DATA"
-        }
-        else if(setController.analyticsBackup === "DATA" ){
-            setController.analyticsBackup = data.analytics
-        }
-
-        setController(true)
-    }
-
-
+    // STATES IN SINGLE OBJECT
     const value = {
         dateRange, setDateRange,
         l2Manager, setL2Manager,
@@ -88,24 +46,12 @@ function Header({Children}){
         callDuration, setCallDuration,
         setIsDrawerOpen,
         employeeDetails,
-        setAnalytics,
-        fetchDashBoardAnalytics,
-        controller,
-        setController,
-        transController,setTransController
+        filterController,setFilterController
     }
-    // console.log("Filters: ",value)
 
 
-
-
-
-
-
-
-
+    // FETCH DEFAULT DATES AND EMPLOYEE DETAILS (INITIAL RENDER)
     useEffect(() => {
-        
       const {
         API_GET_OldestAndNewestDates,
         API_GET_EmployeeList
@@ -116,7 +62,8 @@ function Header({Children}){
         const dates = data.dates
         const dateRanges = [new Date(dates[0]), new Date(dates[1])]
         setDateRange(dateRanges)
-        setDateRange.backup = dateRanges          // ATTACHING INITIAL DATES FOR BACKUP
+        setDateRange.backup = dateRanges          
+        setFilterController((state)=>!state)        // UPDATE CONTROLLER (FILTER)
       }
       fetchDates()
 
@@ -129,16 +76,9 @@ function Header({Children}){
     }, [])
 
 
-    useEffect(()=>{
-        fetchDashBoardAnalytics()
-    },[controller])
-
-    
-    
-
+    // JSX
     return(
         <>
-
             {/* APPBAR */}
             <AppBar className="nav_sec" id="sticky-wrap">
                 <Toolbar className='nav_inner'>
@@ -197,7 +137,6 @@ function Header({Children}){
                 </Toolbar>
             </AppBar>
 
-
             {/* FILTER PANEL */}
             <Drawer
                 anchor = 'right'
@@ -214,7 +153,7 @@ function Header({Children}){
 
             {/* Tab content */}
             <Box className="page_body">
-                {React.cloneElement(Children,{analytics,value})}
+                {React.cloneElement(Children,{value})}
             </Box>
 
             <Footer/>

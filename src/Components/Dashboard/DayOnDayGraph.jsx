@@ -27,12 +27,10 @@ import {
     BarController
   )
 
-  
 
 
 const DayOnDayGraph = ({graphData}) => {
     
-    console.log("PROPS: ",graphData)
 
   //--------------------------
   // DATASETS

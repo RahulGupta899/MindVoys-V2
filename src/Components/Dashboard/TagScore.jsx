@@ -2,7 +2,7 @@ import React from 'react'
 import {Tooltip} from '@mui/material'
 
 const TagScore = ({tagScoresData}) => {
-    console.log("TAG SCORE PROPS: ",tagScoresData)
+
   return (
     <>
         {
