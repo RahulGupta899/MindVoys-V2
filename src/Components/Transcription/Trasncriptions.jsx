@@ -8,6 +8,7 @@ import {API_EndPoints} from '../../Helper/API_EndPoints'
 import {Button, TextField, Stack} from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import AnalyzeCall from './AnalyzeCall';
 
 
 const Trasncriptions = ({value})=>{
@@ -72,10 +73,25 @@ const Trasncriptions = ({value})=>{
             flex:1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: (params)=>{
+                let qualityScore = params.row.qualityScore
+                let qualityScoreFormatted = qualityScore.toFixed(2)+" %"
+                let scoreClass = ""
+                if(qualityScore>=80) scoreClass = "goodScore"
+                else if(qualityScore<40) scoreClass = 'badScore'
+                else scoreClass = 'avgScore'
+
+                return (
+                    <>
+                        <span className={`highlightScore ${scoreClass}`}>{qualityScoreFormatted}</span>
+                    </>
+                )
+                
+            }
         },
         {
             field: 'id',
-            headerName: 'Analyze',
+            headerName: 'Inspect',
             type: 'number',
             flex:1,
             headerAlign: 'center',
@@ -84,11 +100,13 @@ const Trasncriptions = ({value})=>{
             filterable: false,
             renderCell: (params)=>{
                 const id = params.row.id
-                return <NavLink to={`/transcription/${id}`}>
-                            <Button className="bg_light_blue"  >
-                                <PhoneForwardedIcon  sx={{color:'white'}} />
-                            </Button>
-                        </NavLink>
+                return (
+                <>
+                    <Button className="view_trans_btn" data-bs-toggle="modal" data-bs-target="#transcription_modal" onClick={handleClick} >
+                        <PhoneForwardedIcon  sx={{color:'white'}} />
+                    </Button>
+                </>)
+                        
                 
             }
         }
@@ -102,7 +120,7 @@ const Trasncriptions = ({value})=>{
         data: [],
         total: 0,
         page: 0,
-        pageSize: 10, 
+        pageSize: 25, 
     })
 
 
@@ -115,7 +133,6 @@ const Trasncriptions = ({value})=>{
             
             setPageState(old=>({...old, isLoading:true}))
             const {data} = await axios.post(API_WithQuery,filter)
-            console.log(data)
             setPageState(old=>({...old, isLoading:false, data: data.data, total: data.total}))
         }
         fetchData()
@@ -142,7 +159,6 @@ const Trasncriptions = ({value})=>{
         
         setSearchPageState(old=>({...old, isLoading:true}))
         const {data} = await axios.post(API_WithQuery,filter)
-        console.log("Searched Data: ",data)
         setSearchPageState(old=>({...old, isLoading:false, data: data.data, total: data.total}))
     }
 
@@ -150,6 +166,8 @@ const Trasncriptions = ({value})=>{
         setSearchActive(false)
         setSearchText("")
     }
+
+
 
     // SEARCH PAGINATION COLUMNS
     const searchColumns = [
@@ -161,7 +179,7 @@ const Trasncriptions = ({value})=>{
             headerAlign: 'center',
             align: 'center',
             valueFormatter: params => 
-            moment(params.value).format("DD-MMM-YYYY "),
+            moment(params.value).format("DD-MMM-YYYY ")
         },
         {
             field: 'callDuration',
@@ -193,6 +211,21 @@ const Trasncriptions = ({value})=>{
             flex:1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: (params)=>{
+                let qualityScore = params.row.qualityScore
+                let qualityScoreFormatted = qualityScore.toFixed(2)+" %"
+                let scoreClass = ""
+                if(qualityScore>=80) scoreClass = "goodScore"
+                else if(qualityScore<40) scoreClass = 'badScore'
+                else scoreClass = 'avgScore'
+
+                return (
+                    <>
+                        <span className={`highlightScore ${scoreClass}`}>{qualityScoreFormatted}</span>
+                    </>
+                )
+                
+            }
         },
         {
             field: 'searchWordFreq',
@@ -201,10 +234,22 @@ const Trasncriptions = ({value})=>{
             flex:1,
             headerAlign: 'center',
             align: 'center',
+            renderCell: (params)=>{
+                let freq = params.row.searchWordFreq
+                let freqClass = ""
+                if(freq>0) freqClass = "found"
+                else freqClass = 'notFound'
+
+                return (
+                    <>
+                        <span className={`highlightScore ${freqClass}`}>{freq}</span>
+                    </>
+                )  
+            }
         },
         {
             field: 'id',
-            headerName: 'Analyze',
+            headerName: 'Inspect',
             type: 'number',
             flex:1,
             headerAlign: 'center',
@@ -213,11 +258,13 @@ const Trasncriptions = ({value})=>{
             filterable: false,
             renderCell: (params)=>{
                 const id = params.row.id
-                return <NavLink to={`/transcription/${id}`}>
-                            <Button className="bg_light_blue"  >
-                                <PhoneForwardedIcon  sx={{color:'white'}} />
-                            </Button>
-                        </NavLink>
+                return (
+                    <>
+                        <Button className="view_trans_btn" data-bs-toggle="modal" data-bs-target="#transcription_modal" onClick={handleClick} >
+                            <PhoneForwardedIcon  sx={{color:'white'}} />
+                        </Button>
+                    </>
+                )
                 
             }
         }
@@ -230,9 +277,8 @@ const Trasncriptions = ({value})=>{
         data: [],
         total: 0,
         page: 0,
-        pageSize: 10, 
+        pageSize: 25, 
     })
-    console.log("SEARCH PAGE STATE: ",searchPageState)
 
     // SERVER SIDE DATA RENDERING ON PAGE CHANGE, PAGE SIZE CHANGE AND APPLY FILTER 
     useEffect(()=>{
@@ -243,11 +289,15 @@ const Trasncriptions = ({value})=>{
             
             setSearchPageState(old=>({...old, isLoading:true}))
             const {data} = await axios.post(API_WithQuery,filter)
-            console.log("Searched Data: ",data)
             setSearchPageState(old=>({...old, isLoading:false, data: data.data, total: data.total}))
         }
         fetchData()
     },[searchPageState.page,searchPageState.pageSize,filterController])
+
+    const handleClick =(e)=>{
+        console.log(e.target.className) 
+        console.log("Button Clicked...")
+    }
 
 
     // JSX
@@ -263,16 +313,19 @@ const Trasncriptions = ({value})=>{
                         <div className="box_style">
 
                             {/* SEARCH BOX */}
-                            <div>
-                                <Stack direction='row' >
-                                    <TextField 
+                            <div className="box_style_head">
+                                <div className='t_search'>
+                                    <TextField className='search_inp'
                                         placeholder='Search...'
                                         value={searchText}
                                         onChange={(e)=>setSearchText(e.target.value)}
+                                        onKeyDown={(e)=>{
+                                            if(e.key === 'Enter') handleOnSearch()
+                                        }}
                                     />
-                                    <Button 
-                                        variant='contained' 
-                                        sx={{height:'55px', marginLeft:'5px'}}
+                                    <Button className='search_icon'
+                                        variant='contained'
+                                        sx={{height:'45px', marginLeft:'5px'}}
                                         onClick={handleOnSearch}
                                     >
                                         <SearchIcon/>
@@ -280,10 +333,10 @@ const Trasncriptions = ({value})=>{
                                     {
                                         searchText.length>0
                                         ?
-                                        <Button 
-                                            variant='contained' 
+                                        <Button className='search_clear'
+                                            
                                             color='error'
-                                            sx={{height:'55px', marginLeft:'5px'}}
+                                            sx={{height:'45px', marginLeft:'5px'}}
                                             onClick={handleClearSearch}
                                         >
                                             <CloseIcon/>
@@ -291,9 +344,8 @@ const Trasncriptions = ({value})=>{
                                         :
                                         <></>
                                     }
-                                    
-                                </Stack>
-                            </div>
+                                </div>
+                             </div>
 
                             {/* TABALE */}
                             <div className="box_style_body table_style_comman" id="transcription_tbl">
@@ -341,6 +393,8 @@ const Trasncriptions = ({value})=>{
                     </div>
                 </div>
             </section>
+
+            <AnalyzeCall />
         </>
     )
     

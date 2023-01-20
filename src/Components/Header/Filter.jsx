@@ -61,7 +61,7 @@ const Filter = ()=>{
 
             <div className='side_filter_head'>
                 <h3>Filter Search</h3>
-                <Button className='filter_apply_btn' color='error' variant="contained" onClick={handleClearFilters}>CLEAR</Button>
+                <Button className='filter_clear_btn' color='error' variant="contained" onClick={handleClearFilters}>CLEAR</Button>
                 <div className='f_close'><CloseIcon onClick={()=>{setIsDrawerOpen(false)}}/></div>
             </div>
 
