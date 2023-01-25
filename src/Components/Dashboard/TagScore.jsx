@@ -20,15 +20,6 @@ const TagScore = ({tagScoresData}) => {
             })
         }
     </>
-    // <div className='progress_repeat'>
-    //     <div className='progress_name'><label htmlFor="">Opening</label></div>
-    //     <div className="progress tooltip_cus">
-    //         <div className="progress-bar bg_green" style={{width: '96%'}}>96%</div>
-    //         <div className='tooltip_data'>
-    //             70/100
-    //         </div>
-    //     </div>
-    // </div>
   )
 }
 

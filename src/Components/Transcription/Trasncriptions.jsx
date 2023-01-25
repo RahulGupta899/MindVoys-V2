@@ -8,7 +8,8 @@ import {API_EndPoints} from '../../Helper/API_EndPoints'
 import {Button, TextField, Stack} from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
-import AnalyzeCall from './AnalyzeCall';
+import InspectCall from './InspectCall';
+import Waveform from './Waveform';
 
 
 const Trasncriptions = ({value})=>{
@@ -99,10 +100,14 @@ const Trasncriptions = ({value})=>{
             sortable: false,
             filterable: false,
             renderCell: (params)=>{
-                const id = params.row.id
                 return (
                 <>
-                    <Button className="view_trans_btn" data-bs-toggle="modal" data-bs-target="#transcription_modal" onClick={handleClick} >
+                    <Button 
+                        className="view_trans_btn" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#transcription_modal" 
+                        onClick={()=>setCallId(params.id)} 
+                    >
                         <PhoneForwardedIcon  sx={{color:'white'}} />
                     </Button>
                 </>)
@@ -166,7 +171,6 @@ const Trasncriptions = ({value})=>{
         setSearchActive(false)
         setSearchText("")
     }
-
 
 
     // SEARCH PAGINATION COLUMNS
@@ -257,10 +261,14 @@ const Trasncriptions = ({value})=>{
             sortable: false,
             filterable: false,
             renderCell: (params)=>{
-                const id = params.row.id
                 return (
                     <>
-                        <Button className="view_trans_btn" data-bs-toggle="modal" data-bs-target="#transcription_modal" onClick={handleClick} >
+                        <Button 
+                            className="view_trans_btn" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#transcription_modal" 
+                            onClick={()=>setCallId(params.id)}
+                        >
                             <PhoneForwardedIcon  sx={{color:'white'}} />
                         </Button>
                     </>
@@ -294,11 +302,9 @@ const Trasncriptions = ({value})=>{
         fetchData()
     },[searchPageState.page,searchPageState.pageSize,filterController])
 
-    const handleClick =(e)=>{
-        console.log(e.target.className) 
-        console.log("Button Clicked...")
-    }
 
+    //  IF ANY CALL WILL BE CLICKED THIS STATE WILL GET UPDATED (PASSED AS PROP IN INSPECT CALL COMPONENT)
+    const [callId,setCallId] = useState(null)
 
     // JSX
     return(
@@ -394,7 +400,7 @@ const Trasncriptions = ({value})=>{
                 </div>
             </section>
 
-            <AnalyzeCall />
+            <InspectCall callId={callId}/>
         </>
     )
     
