@@ -37,7 +37,7 @@ CircularProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function CircularStatic() {
+export default function CircularBuffer() {
   const [progress, setProgress] = React.useState(10);
 
   React.useEffect(() => {

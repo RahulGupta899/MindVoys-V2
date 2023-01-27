@@ -106,7 +106,7 @@ const Trasncriptions = ({value})=>{
                         className="view_trans_btn" 
                         data-bs-toggle="modal" 
                         data-bs-target="#transcription_modal" 
-                        onClick={()=>setCallId(params.id)} 
+                        onClick={()=>setCallId({callId: params.id})} 
                     >
                         <PhoneForwardedIcon  sx={{color:'white'}} />
                     </Button>

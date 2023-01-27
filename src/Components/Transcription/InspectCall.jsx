@@ -4,14 +4,9 @@ import { useEffect,useState } from 'react';
 import {API_EndPoints} from '../../Helper/API_EndPoints'
 import axios from 'axios'
 import moment from 'moment'
-import LinearBuffer from './LinearBuffer';
 import Waveform from './Waveform';
 
 const InspectCall = ({callId,modelClose,setModelClose}) => {
-
-  console.log("########")
-  console.log("## INSPECT CALL RE-RENDERED ##")
-  console.log("Call ID: ",callId)
   const [transcription,setTranscription] = useState({
     callDate: "",
     url:  "https://demos2t.s3.us-east-2.amazonaws.com/00002051191643537806_66177_20220130052417.m4a",
@@ -22,10 +17,11 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
   useEffect(()=>{
     console.log("INSPECT CALL USE-EFFECT")
     setModelClose(false)
-    if(!callId) return    // For callId == null
+    console.log(callId)
+    if(!callId || !callId.callId) return    // For callId == null
     (async()=>{
       let {API_GET_getSingleTranscription} = API_EndPoints
-      API_GET_getSingleTranscription = `${API_GET_getSingleTranscription}?id=${callId}`
+      API_GET_getSingleTranscription = `${API_GET_getSingleTranscription}?id=${callId.callId}`
       const {data} = await axios.get(API_GET_getSingleTranscription)
       let callDate = data.transcription.metaData.callDate
       callDate = moment(callDate, "YYYY-MM-DD").format("Do MMM YYYY")

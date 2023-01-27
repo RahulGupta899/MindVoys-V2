@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Button,Slider,Stack,Box,Typography,CircularProgress} from '@mui/material'
+import {Button,Slider,Stack,Box,Typography,CircularProgress, CircularProgressWithLabel} from '@mui/material'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import FastForwardIcon from '@mui/icons-material/FastForward';
@@ -13,6 +13,7 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 
 import WaveSurfer from "wavesurfer.js";
+import CircularBuffer from './CircularBuffer'
 
 const formWaveSurferOptions = ref => ({
   container: ref,
@@ -52,7 +53,9 @@ export default function Waveform({transcription,modelClose}){
       remaining: 0,
     })
 
-    
+    const [loading,setLoading] = useState(0)
+    console.log("loaded: ",loading)
+
     const [AudioLoaded,setAudioLoaded] = useState(true)  // AUDIO LOADER STATE
 
     useEffect(()=>{
@@ -76,6 +79,8 @@ export default function Waveform({transcription,modelClose}){
         //DURING LOADING IT WILL EXECUTE
         wavesurfer.current.on("loading",(percent)=>{
           console.log("LOADING....",percent)
+
+          // setLoading(percent)
         })
 
         // ON URL LOAD IT RUNS (but not working)*
@@ -158,7 +163,8 @@ export default function Waveform({transcription,modelClose}){
         {
           AudioLoaded
           ?
-          <CircularProgress/>   
+          // <CircularProgress/>   
+          <CircularBuffer value={loading} />
           :
 
           // AUDIO CONTROLLER
