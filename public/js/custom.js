@@ -20,5 +20,23 @@ function createSticky(sticky) {
     }
 }
 
-
-
+$(function () {
+    $(window).on('popstate', function () {
+        //$('.modal').modal('hide');
+        $(".modal-backdrop").remove();
+        //$(".in").remove();
+        body.style.overflow = "auto";
+    });
+});
+const modal = document.querySelector("#transcription_modal");
+        const body = document.querySelector("body");
+        const showModal = function (e) {
+            modal.classList.toggle("hidden");
+            if (!modal.classList.contains("hidden")) {
+                // Disable scroll
+                body.style.overflow = "hidden";
+            } else {
+                // Enable scroll
+                body.style.overflow = "auto";
+            }
+        };

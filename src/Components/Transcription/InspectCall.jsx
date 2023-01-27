@@ -4,21 +4,24 @@ import { useEffect,useState } from 'react';
 import {API_EndPoints} from '../../Helper/API_EndPoints'
 import axios from 'axios'
 import moment from 'moment'
+import LinearBuffer from './LinearBuffer';
 import Waveform from './Waveform';
 
-const InspectCall = ({callId}) => {
+const InspectCall = ({callId,modelClose,setModelClose}) => {
 
+  console.log("########")
+  console.log("## INSPECT CALL RE-RENDERED ##")
+  console.log("Call ID: ",callId)
   const [transcription,setTranscription] = useState({
     callDate: "",
     url:  "https://demos2t.s3.us-east-2.amazonaws.com/00002051191643537806_66177_20220130052417.m4a",
     agentName: ""
   })
 
-
-  // const s3Bucket = "https://demos2t.s3.us-east-2.amazonaws.com/00002051191643537806_66177_20220130052417.m4a"
-  // const [url, setUrl] = useState(s3Bucket);
   
   useEffect(()=>{
+    console.log("INSPECT CALL USE-EFFECT")
+    setModelClose(false)
     if(!callId) return    // For callId == null
     (async()=>{
       let {API_GET_getSingleTranscription} = API_EndPoints
@@ -30,17 +33,24 @@ const InspectCall = ({callId}) => {
       let url = data.transcription.transcriptionDetails.url
       setTranscription({callDate,agentName,url})
     })()
-  },[callId])
+  },[callId,modelClose])
 
+  
+
+  
 
   return (
     <div className="modal fade trans_modal" id="transcription_modal">
         <div className="modal-dialog">
+
           <div className="modal-content">
             {/* Modal Header */}
             <div className="modal-header">
               <h5 className="modal-title">{`${transcription.callDate}, ${transcription.agentName}`}</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" />
+              <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={()=>{
+                console.log("Pop up clicked")
+                setModelClose(true)
+              }} />
             </div>
             {/* Modal body */}
             <div className="modal-body">
@@ -49,8 +59,15 @@ const InspectCall = ({callId}) => {
                   <div className="col-lg-12 box_style_main">
                       <div className="box_style">
                           <div className="box_style_body">
-                            <div className="wavesuffer_player">
-                              <Waveform url={transcription.url} />
+                            <div className="wavesurfer_player">
+                              {
+                                modelClose
+                                ?
+                                <h1>Audio player closed</h1>
+                                :
+                                <Waveform transcription={transcription} modelClose={modelClose}/>
+                              }
+                              {/* <Waveform transcription={transcription} modelClose={modelClose}/> */}
                             </div>
                           </div>
                       </div>
@@ -151,3 +168,19 @@ const InspectCall = ({callId}) => {
 }
 
 export default InspectCall
+
+
+
+/*
+-------------------
+  COMPONENT FLOW
+-------------------
+   1. FIRST TIME THIS COMPONENT WILL RENDER WITH NULL CALL ID 
+      (Important to render at the beg as it's a modal)
+
+   2. COMPONENT RE-RENDER :  WHENEVER callID state will change
+
+   3. USE-EFFECT EXECUTION: DEPENDENCY ON [callId]  
+
+
+*/

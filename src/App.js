@@ -6,7 +6,6 @@ import Trasncriptions from './Components/Transcription/Trasncriptions'
 
 
 const App = ()=>{
-
     return(
         <BrowserRouter>
             <Routes>

@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Button,Slider,Stack,Box,Typography} from '@mui/material'
+import {Button,Slider,Stack,Box,Typography,CircularProgress} from '@mui/material'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import FastRewindIcon from '@mui/icons-material/FastRewind';
 import PlayBackButton from "./PlayBackButton";
+
+import Replay10Icon from '@mui/icons-material/Replay10';
+import Forward10Icon from '@mui/icons-material/Forward10';
+
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 
 import WaveSurfer from "wavesurfer.js";
 
@@ -16,14 +22,24 @@ const formWaveSurferOptions = ref => ({
   barWidth: 3,
   barRadius: 3,
   responsive: true,
-  height: 180,
+  height: 120,
   normalize: true,
   partialRender: true,
-  // hideScrollbar: true
+  hideScrollbar: true,
+  backend: "WebAudio"
 });
 
 
-export default function Waveform({url}){
+export default function Waveform({transcription,modelClose}){
+    console.log("#### WAVEFORM COMPONENT RE-RENDERED ###")
+
+    if(modelClose){
+      // handlePlayPause()
+      console.log("MODEL STATUS: ",modelClose)
+    }
+
+    const [sliderActive,setSliderActive] = useState('none')
+
     const waveformRef = useRef(null)
     const wavesurfer = useRef(null)
 
@@ -35,9 +51,19 @@ export default function Waveform({url}){
       current: 0,
       remaining: 0,
     })
-    console.log(playerStatus)
+
+    
+    const [AudioLoaded,setAudioLoaded] = useState(true)  // AUDIO LOADER STATE
 
     useEffect(()=>{
+
+        setAudioLoaded(true)
+        setPlaying(false)
+        setPlayerStatus({
+          total: 0,
+          current: 0,
+          remaining: 0,
+        })
 
         const options = formWaveSurferOptions(waveformRef.current)
         
@@ -45,7 +71,7 @@ export default function Waveform({url}){
         wavesurfer.current = WaveSurfer.create(options)
 
         //LOAD THE URL 
-        wavesurfer.current.load(url)
+        wavesurfer.current.load(transcription.url)
 
         //DURING LOADING IT WILL EXECUTE
         wavesurfer.current.on("loading",(percent)=>{
@@ -53,11 +79,9 @@ export default function Waveform({url}){
         })
 
         // ON URL LOAD IT RUNS (but not working)*
-        // wavesurfer.current.on('ready',()=>{
-        //     console.log("PLAYING....",)
-        //     // wavesurfer.current.play()
-        //     // setPlaying(true)
-        // })
+        wavesurfer.current.on('ready',()=>{
+          setAudioLoaded(false)
+        })
 
         wavesurfer.current.on('audioprocess', function() {
             if (wavesurfer.current.isPlaying()) {
@@ -68,15 +92,17 @@ export default function Waveform({url}){
                 total: totalTime,
                 current: currentTime,
                 remaining: remainingTime
-              })
-              
+              })              
             }
         });
+
+
+        
 
       
         return () => wavesurfer.current.destroy();
 
-    },[url])
+    },[transcription])
 
     
 
@@ -87,8 +113,6 @@ export default function Waveform({url}){
     const handlePlayPause = ()=>{
       setPlaying((state)=>!state)
       wavesurfer.current.playPause()
-      console.log((wavesurfer.current.getCurrentTime()/60)+" / "+wavesurfer.current.getDuration())
-      console.log("IN Secs: "+(wavesurfer.current.getDuration()/60))
     }
 
     const handleVolumeChange = (e,newVal)=>{
@@ -101,10 +125,6 @@ export default function Waveform({url}){
       wavesurfer.current.toggleMute()
     }
 
-    const handleVolumeMax = ()=>{
-      setVolume(1)
-      wavesurfer.current.setVolume(0.9)
-    }
 
     const handle10SecRewind = ()=>{
       wavesurfer.current.skipBackward(10)
@@ -133,49 +153,76 @@ export default function Waveform({url}){
 
     return(
       <>
-        {/* AUDIO PLAYER */}
+        {/* WAVEFORM */}
         <div id="waveform" ref={waveformRef} />
+        {
+          AudioLoaded
+          ?
+          <CircularProgress/>   
+          :
 
-        {/* CONTROLS */}
-        <Stack direction='row'  spacing={4} className="controls">
+          // AUDIO CONTROLLER
+          <Stack direction='row'  spacing={4} className="controls">
+
+            {/* REWIND 10 SEC */}
+            <Replay10Icon onClick={handle10SecRewind}   />
+            
+            {/* PLAY PAUSE  */}
+            <Button  onClick={handlePlayPause}>
+              {playing? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+            </Button>
+
+            {/* FORWARD 10 SEC */}
+            <Forward10Icon onClick={handle10SecForward} />
+
+            {/* PLAYER STATUS */}
+            <Typography variant="subtitle">{`${secondsToTimestamp(playerStatus.current)} / ${secondsToTimestamp(playerStatus.total)}`}</Typography>
+           
+            {/* PLAYBACK RATE */}
+            <PlayBackButton wavesurfer={wavesurfer}/>
+
+            {/* VOLUME */}
+            <Box sx={{ width: 200 }}>
+              <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+                {
+                  mute
+                  ?
+                  <VolumeOffIcon onClick={handleToggleMute} onMouseOver={()=>{
+                    setSliderActive('none')
+                  }}/>
+                  :
+                  <VolumeUpIcon  onMouseOver={()=>{
+                    setSliderActive('block')
+                  }}  onClick={handleToggleMute} />
+                }
+                
+                <Slider 
+                  value={volume} 
+                  min={0.01} 
+                  step={0.01} 
+                  max={1} 
+                  onChange={handleVolumeChange} 
+                  onMouseOver={()=>{
+                    setSliderActive('block')
+                  }}
+                  onMouseOut={()=>{
+                    console.log("MOUSE OUT")
+                    setSliderActive('none')
+                  }}
+                  sx={{width:'100px', display:`${sliderActive}`}}
+                />
+              </Stack>
+            </Box>
+
+
+            
+            
+            
+
+          </Stack>
           
-          {/* PLAY PAUSE  */}
-          <Button variant="contained" onClick={handlePlayPause}>{playing? "Pause" : "Play"}</Button>
-          
-          {/* VOLUME */}
-          <Box sx={{ width: 200 }}>
-            <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
-              {
-                mute
-                ?
-                <VolumeOffIcon onClick={handleToggleMute}/>
-                :
-                <VolumeUpIcon onClick={handleToggleMute} />
-              }
-              <Slider 
-                value={volume} 
-                min={0.01} 
-                step={0.01} 
-                max={1} 
-                onChange={handleVolumeChange} 
-              />
-            </Stack>
-          </Box>
-
-          {/* PLAYER STATUS */}
-          <Box>
-            <Stack>
-              <Typography variant="subtitle1">Remaining : {secondsToTimestamp(playerStatus.remaining)}</Typography>
-              <Typography variant="subtitle">Status: {`${secondsToTimestamp(playerStatus.current)} / ${secondsToTimestamp(playerStatus.total)}`}</Typography>
-            </Stack>
-          </Box>
-
-          <PlayBackButton wavesurfer={wavesurfer}/>
-
-          <FastRewindIcon onClick={handle10SecRewind}/>
-          <FastForwardIcon onClick={handle10SecForward}/>
-
-        </Stack>
+        }
+        
       
       </>
 

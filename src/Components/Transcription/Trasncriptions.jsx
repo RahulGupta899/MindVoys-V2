@@ -233,7 +233,7 @@ const Trasncriptions = ({value})=>{
         },
         {
             field: 'searchWordFreq',
-            headerName: 'Frequency',
+            headerName: 'Hits',
             type: 'number',
             flex:1,
             headerAlign: 'center',
@@ -305,6 +305,9 @@ const Trasncriptions = ({value})=>{
 
     //  IF ANY CALL WILL BE CLICKED THIS STATE WILL GET UPDATED (PASSED AS PROP IN INSPECT CALL COMPONENT)
     const [callId,setCallId] = useState(null)
+
+    // MODAL CLOSE TO HANDLE THE BUG
+    const [modelClose,setModelClose] = useState(false)
 
     // JSX
     return(
@@ -389,31 +392,25 @@ const Trasncriptions = ({value})=>{
                                         onPageSizeChange={(newPageSize) => setSearchPageState(old=>({...old, pageSize:newPageSize}))}
                                         columns={searchColumns}
                                     /> 
-                                    
-
                                 }
                                                                
                             </div>
-
                         </div>
                     </div>
                 </div>
             </section>
 
-            <InspectCall callId={callId}/>
+
+            
+            {/* MODAL */}
+            <InspectCall callId={callId} modelClose={modelClose} setModelClose={setModelClose} />
+                 
         </>
     )
     
         
 }
 
-
-
-
-
-
-
- 
 
 export default Trasncriptions
 
