@@ -5,11 +5,10 @@ import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
 import {NavLink,useLocation} from 'react-router-dom'
 import axios from 'axios';
 import {API_EndPoints} from '../../Helper/API_EndPoints'
-import {Button, TextField, Stack} from '@mui/material'
+import {Button, TextField} from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import InspectCall from './InspectCall';
-import Waveform from './Waveform';
 
 
 const Trasncriptions = ({value})=>{
@@ -31,7 +30,6 @@ const Trasncriptions = ({value})=>{
     }
 
     
-
     // PAGINATION COLUMNS
     const columns = [
         {
@@ -132,7 +130,6 @@ const Trasncriptions = ({value})=>{
     // SERVER SIDE DATA RENDERING ON PAGE CHANGE, PAGE SIZE CHANGE AND APPLY FILTER 
     useEffect(()=>{
         const fetchData = async()=>{
-            // console.log("  -->>>TRANSCRIPTIONS USE-EFFECT")
             const {API_POST_getTranscriptionsPagination} = API_EndPoints
             const API_WithQuery = `${API_POST_getTranscriptionsPagination}?page=${pageState.page}&limit=${pageState.pageSize}`
             
@@ -149,28 +146,6 @@ const Trasncriptions = ({value})=>{
     //---------------------------------
     const [searchText,setSearchText] = useState("");
     const [searchActive,setSearchActive] = useState(false);
-
-    const handleOnSearch = async()=>{
-        if(searchText === "") return 
-        setSearchPageState((state)=>{
-            return {
-                ...state,
-                page:0
-            }
-        })
-        setSearchActive(true)
-        const {API_POST_getTranscriptionsPaginationOnSearch} = API_EndPoints
-        const API_WithQuery = `${API_POST_getTranscriptionsPaginationOnSearch}?text=${searchText}&page=${searchPageState.page}&limit=${searchPageState.pageSize}`
-        
-        setSearchPageState(old=>({...old, isLoading:true}))
-        const {data} = await axios.post(API_WithQuery,filter)
-        setSearchPageState(old=>({...old, isLoading:false, data: data.data, total: data.total}))
-    }
-
-    const handleClearSearch = async()=>{
-        setSearchActive(false)
-        setSearchText("")
-    }
 
 
     // SEARCH PAGINATION COLUMNS
@@ -267,7 +242,7 @@ const Trasncriptions = ({value})=>{
                             className="view_trans_btn" 
                             data-bs-toggle="modal" 
                             data-bs-target="#transcription_modal" 
-                            onClick={()=>setCallId(params.id)}
+                            onClick={()=>setCallId({callId: params.id})} 
                         >
                             <PhoneForwardedIcon  sx={{color:'white'}} />
                         </Button>
@@ -291,7 +266,6 @@ const Trasncriptions = ({value})=>{
     // SERVER SIDE DATA RENDERING ON PAGE CHANGE, PAGE SIZE CHANGE AND APPLY FILTER 
     useEffect(()=>{
         const fetchData = async()=>{
-            // console.log("  -->>>TRANSCRIPTIONS USE-EFFECT")
             const {API_POST_getTranscriptionsPaginationOnSearch} = API_EndPoints
             const API_WithQuery = `${API_POST_getTranscriptionsPaginationOnSearch}?text=${searchText}&page=${searchPageState.page}&limit=${searchPageState.pageSize}`
             
@@ -302,11 +276,36 @@ const Trasncriptions = ({value})=>{
         fetchData()
     },[searchPageState.page,searchPageState.pageSize,filterController])
 
+    // FETCH SEARCHED CALLS
+    const handleOnSearch = async()=>{
+        if(searchText === "") return 
+        setSearchPageState((state)=>{
+            return {
+                ...state,
+                page:0
+            }
+        })
+        setSearchActive(true)
+        const {API_POST_getTranscriptionsPaginationOnSearch} = API_EndPoints
+        const API_WithQuery = `${API_POST_getTranscriptionsPaginationOnSearch}?text=${searchText}&page=${searchPageState.page}&limit=${searchPageState.pageSize}`
+        
+        setSearchPageState(old=>({...old, isLoading:true}))
+        const {data} = await axios.post(API_WithQuery,filter)
+        setSearchPageState(old=>({...old, isLoading:false, data: data.data, total: data.total}))
+    }
+    
+    // RESTORE CALLS (CLEAR SEARCH)
+    const handleClearSearch = async()=>{
+        setSearchActive(false)
+        setSearchText("")
+    }
+
 
     //  IF ANY CALL WILL BE CLICKED THIS STATE WILL GET UPDATED (PASSED AS PROP IN INSPECT CALL COMPONENT)
-    const [callId,setCallId] = useState(null)
+    const [callId,setCallId] = useState(null) 
 
-    // MODAL CLOSE TO HANDLE THE BUG
+
+    // MODAL CLOSE STATE TO HANDLE THE BUG
     const [modelClose,setModelClose] = useState(false)
 
     // JSX
@@ -401,10 +400,8 @@ const Trasncriptions = ({value})=>{
             </section>
 
 
-            
             {/* MODAL */}
             <InspectCall callId={callId} modelClose={modelClose} setModelClose={setModelClose} />
-                 
         </>
     )
     
@@ -413,6 +410,12 @@ const Trasncriptions = ({value})=>{
 
 
 export default Trasncriptions
+
+/*
+    COMPONENT FLOW: 
+
+
+*/
 
 
 

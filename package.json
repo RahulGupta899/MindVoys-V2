@@ -21,7 +21,6 @@
     "react-loading-dot": "^1.0.6",
     "react-router-dom": "^6.6.1",
     "react-scripts": "5.0.1",
-    "rsuite": "^5.25.0",
     "wavesurfer.js": "^6.4.0",
     "web-vitals": "^2.1.4"
   },

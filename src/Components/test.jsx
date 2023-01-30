@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Button,Slider,Stack,Box,Typography,CircularProgress, CircularProgressWithLabel} from '@mui/material'
+import {Button,Slider,Stack,Box,Typography,CircularProgress} from '@mui/material'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import PlayBackButton from "./PlayBackButton";
@@ -8,16 +8,17 @@ import Forward10Icon from '@mui/icons-material/Forward10';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import WaveSurfer from "wavesurfer.js";
+import CircularBuffer from './CircularBuffer'
 
 const formWaveSurferOptions = ref => ({
   container: ref,
-  waveColor: "#e1e5fa",
-  progressColor: "#283891",
+  waveColor: "#eee",
+  progressColor: "black",
   cursorColor: "black",
   barWidth: 3,
   barRadius: 3,
   responsive: true,
-  height: 100,
+  height: 120,
   normalize: true,
   partialRender: true,
   hideScrollbar: true,
@@ -26,7 +27,7 @@ const formWaveSurferOptions = ref => ({
 
 
 export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
-    
+
     const waveformRef = useRef(null)
     // const wavesurfer = useRef(null)
 
@@ -35,7 +36,7 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
     // const [playing,setPlaying] = useState(false)
     const [mute,setMute] = useState(false)
     const [playerStatus,setPlayerStatus] = useState({
-      total: 0,
+      total: 0,                                         
       current: 0,
       remaining: 0,
     })
@@ -67,12 +68,10 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
           console.log("LOADING....",percent)
         })
 
-        // ON URL LOAD IT RUNS 
         wavesurfer.current.on('ready',()=>{
           setAudioLoaded(false)
         })
 
-        // WHEN AUDIO IS PLAYING
         wavesurfer.current.on('audioprocess', function() {
             if (wavesurfer.current.isPlaying()) {
               let totalTime = wavesurfer.current.getDuration(),
@@ -82,16 +81,12 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
                 total: totalTime,
                 current: currentTime,
                 remaining: remainingTime
-              })              
+              })          
             }
         });
 
 
-        
-
-      
         return () => wavesurfer.current.destroy();
-
     },[transcription])
 
     
@@ -116,6 +111,8 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
     }
 
 
+    
+
     //--------------------------------
     // HELPER FUNCTIONS
     //-------------------------------
@@ -137,44 +134,35 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
     const [sliderActive,setSliderActive] = useState('none') 
 
     // AUDIO LOADER STATE
-    const [AudioLoaded,setAudioLoaded] = useState(true) 
+    const [AudioLoaded,setAudioLoaded] = useState(true)  
 
 
     return(
       <>
-      
-      
         {/* WAVEFORM */}
         <div id="waveform" ref={waveformRef} />
         {
           AudioLoaded
           ?
-          <div className="loader_style">
-            <CircularProgress className="loader_icon"/> 
-          </div>
+          <CircularProgress/>   
           :
 
           // AUDIO CONTROLLER
-          <Stack direction='row'  spacing={4} className="controls wave_controls">
+          <Stack direction='row'  spacing={4} className="controls">
 
-            <div className="play_forward_btn">
+            {/* REWIND 10 SEC */}
+            <Replay10Icon onClick={()=>{wavesurfer.current.skipBackward(10)}}   />
+            
+            {/* PLAY PAUSE  */}
+            <Button  onClick={handlePlayPause}>
+              {playing? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+            </Button>
 
-              {/* REWIND 10 SEC */}
-              <Replay10Icon onClick={()=>{wavesurfer.current.skipBackward(10)}}   />
-              
-              {/* PLAY PAUSE  */}
-              <Button  onClick={handlePlayPause} className="btn_play">
-                {playing? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
-              </Button>
-
-              {/* FORWARD 10 SEC */}
-              <Forward10Icon onClick={()=>{wavesurfer.current.skipForward(10)}} />
-
-            </div>
+            {/* FORWARD 10 SEC */}
+            <Forward10Icon onClick={()=>{wavesurfer.current.skipForward(10)}} />
 
             {/* PLAYER STATUS */}
             <Typography variant="subtitle">{`${secondsToTimestamp(playerStatus.current)} / ${secondsToTimestamp(playerStatus.total)}`}</Typography>
-           
             {/* PLAYBACK RATE */}
             <PlayBackButton wavesurfer={wavesurfer}/>
 
@@ -184,15 +172,16 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
                 {
                   mute
                   ?
-                  <VolumeOffIcon onClick={handleToggleMute} onMouseOver={()=>{
-                    setSliderActive('none')
-                  }}/>
+                  <VolumeOffIcon 
+                    onClick={handleToggleMute} 
+                    onMouseOver={()=>{setSliderActive('none')}}
+                  />
                   :
-                  <VolumeUpIcon  onMouseOver={()=>{
-                    setSliderActive('block')
-                  }}  onClick={handleToggleMute} />
+                  <VolumeUpIcon  
+                    onClick={handleToggleMute} 
+                    onMouseOver={()=>{setSliderActive('block')}}  
+                  />
                 }
-                
                 <Slider 
                   value={volume} 
                   min={0.01} 
@@ -201,17 +190,40 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
                   onChange={handleVolumeChange} 
                   onMouseOver={()=>{setSliderActive('block')}}
                   onMouseOut={()=>{setSliderActive('none')}}
-                  sx={{width:'80px', display:`${sliderActive}`}}
+                  sx={{width:'100px', display:`${sliderActive}`}}
                 />
               </Stack>
             </Box>
           </Stack>
-          
         }
         
-      
       </>
-
 
     )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
