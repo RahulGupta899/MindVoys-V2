@@ -12,7 +12,7 @@ import WaveSurfer from "wavesurfer.js";
 const formWaveSurferOptions = ref => ({
   container: ref,
   waveColor: "#e1e5fa",
-  progressColor: "#283891",
+  progressColor: "black",
   cursorColor: "black",
   barWidth: 3,
   barRadius: 3,
@@ -25,7 +25,7 @@ const formWaveSurferOptions = ref => ({
 });
 
 
-export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
+export default function Waveform({transcription,wavesurfer,playing,setPlaying,phraseRef}){
     
     const waveformRef = useRef(null)
     // const wavesurfer = useRef(null)
@@ -74,6 +74,8 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
 
         // WHEN AUDIO IS PLAYING
         wavesurfer.current.on('audioprocess', function() {
+            
+            console.log('AUDIO IS IN PROCESS...')
             if (wavesurfer.current.isPlaying()) {
               let totalTime = wavesurfer.current.getDuration(),
                   currentTime = wavesurfer.current.getCurrentTime(),
@@ -82,14 +84,35 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying}){
                 total: totalTime,
                 current: currentTime,
                 remaining: remainingTime
-              })              
+              })  
+              
+
+              //SYNCING PART (APPROACH 1)
+              let transcriptDiv = phraseRef.current.childNodes
+              transcriptDiv = Array.from(transcriptDiv)
+              transcriptDiv.map((div)=>{
+                let timestamp = div.childNodes[0].childNodes[1]
+                if(timestamp) timestamp = timestamp.getAttribute('timestamp')
+                const phrase = div.childNodes[1]
+                console.log("Timestamp: ",timestamp)
+                if(currentTime >= Number(timestamp)){
+                  phrase.classList.add('active-text')
+                }
+                if(currentTime < Number(timestamp)) phrase.classList.remove('active-text')
+              })
+
+              // console.log("##### phrase 9#########")
+              // const text = document.querySelector('#phrase9')
+              // text.scrollIntoView({
+              //   behavior:'smooth'
+              // })
+
+              //SYNCING PART (APPROACH 2)
+
             }
+       
         });
 
-
-        
-
-      
         return () => wavesurfer.current.destroy();
 
     },[transcription])

@@ -4,6 +4,7 @@ import {API_EndPoints} from '../../Helper/API_EndPoints'
 import axios from 'axios'
 import moment from 'moment'
 import Waveform from './Waveform';
+import {secondsToTimestamp} from '../../Helper/helper'
 
 const InspectCall = ({callId,modelClose,setModelClose}) => {
 
@@ -11,7 +12,8 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
   const [transcription,setTranscription] = useState({
     callDate: "",
     url:  "https://demos2t.s3.us-east-2.amazonaws.com/00002051191643537806_66177_20220130052417.m4a",  //default call to avoid the wavesurfer bug
-    agentName: ""
+    agentName: "",
+    phrases: null,
   })
 
 
@@ -28,20 +30,23 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
       callDate = moment(callDate, "YYYY-MM-DD").format("Do MMM YYYY")
       let agentName = data.transcription.callDetails.agent.name
       let url = data.transcription.transcriptionDetails.url
-      setTranscription({callDate,agentName,url})
+      let phrases = data.transcription.transcriptionDetails.phrases
+      setTranscription({callDate,agentName,url,phrases})
     })()
   },[callId,modelClose])
 
 
   // WAVESURFER 
   const wavesurfer = useRef(null)
+  const phraseRef =  useRef(null)
   const [playing,setPlaying] = useState(false)
 
-  const jumpToText = ()=>{
-    console.log("JUMP TO TEXT")
+  const jumpToText = (timestamp)=>{
     setPlaying(true)
-    wavesurfer.current.play(12.1)
+    wavesurfer.current.play(timestamp)
   }
+
+  
   
   // JSX
   return (
@@ -78,7 +83,14 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                                   ?
                                   null
                                   :
-                                  <Waveform transcription={transcription} modelClose={modelClose} wavesurfer={wavesurfer} playing={playing} setPlaying={setPlaying}/>
+                                  <Waveform 
+                                    transcription={transcription} 
+                                    modelClose={modelClose} 
+                                    wavesurfer={wavesurfer} 
+                                    playing={playing} 
+                                    setPlaying={setPlaying}
+                                    phraseRef={phraseRef}
+                                  />
                                 }
                               </div>
                             </div>
@@ -90,74 +102,46 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                         <div className="box_style">
                           <div className="box_style_head">
                             <h2>Transcript</h2>
-                            <div className="box_title_right">
+                            {/* <div className="box_title_right">
                               <div className='t_search'>
                                 <input type="text" className="form-control" placeholder='Search..' />
                                 <div className='search_icon'>
                                   <button className="t_searach_btn"><SearchIcon /></button>
                                 </div>
                               </div>
-                            </div>
-                        </div>
-                            <div className="box_style_body">
-                                <div className='text_translate_area'>
-                                  <div className='text_con_repeat'>
-                                    <div className='text_con_name'>
-                                      <h4>Customer</h4>
-                                      <h5 onClick={jumpToText}>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Hello.</div>
-                                  </div>
-                                  <div className='text_con_repeat agent_row'>
-                                    <div className='text_con_name'>
-                                      <h4>Agent</h4>
-                                      <h5 onClick={()=>{wavesurfer.current.play(112.1)}}>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Welcome, Mr. (customer name), how are you today?</div>
-                                  </div>
-                                  <div className='text_con_repeat'>
-                                    <div className='text_con_name'>
-                                      <h4>Customer</h4>
-                                      <h5>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Hello.</div>
-                                  </div>
-                                  <div className='text_con_repeat agent_row'>
-                                    <div className='text_con_name'>
-                                      <h4>Agent</h4>
-                                      <h5>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Welcome, Mr. (customer name), how are you today?</div>
-                                  </div>
-                                  <div className='text_con_repeat'>
-                                    <div className='text_con_name'>
-                                      <h4>Customer</h4>
-                                      <h5>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Hello.</div>
-                                  </div>
-                                  <div className='text_con_repeat agent_row'>
-                                    <div className='text_con_name'>
-                                      <h4>Agent</h4>
-                                      <h5>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Welcome, Mr. (customer name), how are you today?</div>
-                                  </div>
-                                  <div className='text_con_repeat'>
-                                    <div className='text_con_name'>
-                                      <h4>Customer</h4>
-                                      <h5>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Hello.</div>
-                                  </div>
-                                  <div className='text_con_repeat agent_row'>
-                                    <div className='text_con_name'>
-                                      <h4>Agent</h4>
-                                      <h5>00:00</h5>
-                                    </div>
-                                    <div className='text_con_chat'>Welcome, Mr. (customer name), how are you today?</div>
-                                  </div>
+                            </div> */}
+                          </div>
+                            <div className="box_style_body" >
+                                <div ref={phraseRef} className='text_translate_area' style={{height:'380px', overflowY:'scroll',paddingRight:'30px'}}>
+                                  {
+                                    transcription.phrases
+                                    ?
+                                    transcription.phrases.speaker.map((item,idx)=>{
+                                      return (
+                                        <div className='text_con_repeat agent_row' key={idx}>
+                                          <div className='text_con_name'>
+                                            <h4>{item}</h4>
+                                            <h5 
+                                              onClick={()=>{jumpToText(transcription.phrases.timestamp[idx])}}
+                                              className="timestamp" 
+                                              timestamp={transcription.phrases.timestamp[idx]}
+
+                                            >
+                                              {secondsToTimestamp(transcription.phrases.timestamp[idx])}
+                                            </h5>
+                                          </div>
+                                          <div className='text_con_chat' id={`phrase${idx}`}>{transcription.phrases.text[idx]}</div>
+                                        </div>
+                                      )
+                                    })
+                                    :
+                                    <div>bug fix</div>
+                                  }
+                                      <button id='dummy'>
+                                       DUMMY
+                                      </button>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>

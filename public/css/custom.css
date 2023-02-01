@@ -839,3 +839,16 @@ body::-webkit-scrollbar-thumb {
   color: #000;
   font-size: 17px;
 }
+
+.timestamp:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.active-text{
+  background-color: #d6e6f5;
+    color: #000000;
+    padding: 8px 10px;
+    border-radius: 5px;
+}
+
