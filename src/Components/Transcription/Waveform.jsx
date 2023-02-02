@@ -5,13 +5,12 @@ import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import PlayBackButton from "./PlayBackButton";
 import Replay10Icon from '@mui/icons-material/Replay10';
 import Forward10Icon from '@mui/icons-material/Forward10';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import WaveSurfer from "wavesurfer.js";
 
 const formWaveSurferOptions = ref => ({
   container: ref,
   waveColor: "#e1e5fa",
+  progressColor: "#283891",
   progressColor: "black",
   cursorColor: "black",
   barWidth: 3,
@@ -28,24 +27,24 @@ const formWaveSurferOptions = ref => ({
 export default function Waveform({transcription,wavesurfer,playing,setPlaying,phraseRef}){
     
     const waveformRef = useRef(null)
-    // const wavesurfer = useRef(null)
 
     // CONTROLS STATE
     const [volume,setVolume] = useState(0.4)
-    // const [playing,setPlaying] = useState(false)
     const [mute,setMute] = useState(false)
     const [playerStatus,setPlayerStatus] = useState({
       total: 0,
       current: 0,
       remaining: 0,
     })
+    const [loading,setLoading] = useState(0)
 
 
 
     
 
     useEffect(()=>{
-
+        console.log("USE-EFFECT RE-rendered...")
+        setLoading(0)
         setAudioLoaded(true)
         setPlaying(false)
         setPlayerStatus({
@@ -64,22 +63,28 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
 
         //DURING LOADING IT WILL EXECUTE
         wavesurfer.current.on("loading",(percent)=>{
+          console.log("EXEC")
           console.log("LOADING....",percent)
+          if(percent !== 100)
+          setLoading(percent)
         })
 
         // ON URL LOAD IT RUNS 
         wavesurfer.current.on('ready',()=>{
+          console.log("----READY----")
+          setLoading(100)
           setAudioLoaded(false)
         })
 
         // WHEN AUDIO IS PLAYING
         wavesurfer.current.on('audioprocess', function() {
             
-            console.log('AUDIO IS IN PROCESS...')
             if (wavesurfer.current.isPlaying()) {
               let totalTime = wavesurfer.current.getDuration(),
                   currentTime = wavesurfer.current.getCurrentTime(),
                   remainingTime = totalTime - currentTime;
+                  console.log("Total time: ",totalTime)
+                  console.log("Current Time: ",currentTime)
               setPlayerStatus({
                 total: totalTime,
                 current: currentTime,
@@ -89,23 +94,22 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
 
               //SYNCING PART (APPROACH 1)
               let transcriptDiv = phraseRef.current.childNodes
+
               transcriptDiv = Array.from(transcriptDiv)
               transcriptDiv.map((div)=>{
+
                 let timestamp = div.childNodes[0].childNodes[1]
                 if(timestamp) timestamp = timestamp.getAttribute('timestamp')
                 const phrase = div.childNodes[1]
-                console.log("Timestamp: ",timestamp)
                 if(currentTime >= Number(timestamp)){
                   phrase.classList.add('active-text')
+                  div.childNodes[0].childNodes[1].scrollIntoView({
+                    behavior:'smooth'
+                  })
+                  console.log("Timestamp: ",timestamp)
                 }
                 if(currentTime < Number(timestamp)) phrase.classList.remove('active-text')
               })
-
-              // console.log("##### phrase 9#########")
-              // const text = document.querySelector('#phrase9')
-              // text.scrollIntoView({
-              //   behavior:'smooth'
-              // })
 
               //SYNCING PART (APPROACH 2)
 
@@ -114,7 +118,6 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
         });
 
         return () => wavesurfer.current.destroy();
-
     },[transcription])
 
     
@@ -139,7 +142,7 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
     }
 
 
-    //--------------------------------
+    //-------------------------------
     // HELPER FUNCTIONS
     //-------------------------------
     const secondsToTimestamp= (seconds)=>{
@@ -147,7 +150,7 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
       let h = Math.floor(seconds / 3600);
       let m = Math.floor((seconds - (h * 3600)) / 60);
       let s = seconds - (h * 3600) - (m * 60);
-      
+
       // FORMATTING FOR SINGLE DIGIT
       h = h < 10 ? '0' + h : h;
       m = m < 10 ? '0' + m : m;
@@ -172,9 +175,16 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
         {
           AudioLoaded
           ?
-          <div className="loader_style">
-            <CircularProgress className="loader_icon"/> 
-          </div>
+          <div className="loader_style">   
+            {/*<CircularProgress className="loader_icon"></CircularProgress>  */}
+            <div className="wrapper">              
+              <div id="preloader_1">
+                  <h6>{loading}%</h6>
+                  <br/>
+                  <span /><span /><span /><span />           
+              </div>            
+            </div>          
+            </div>
           :
 
           // AUDIO CONTROLLER
@@ -183,20 +193,20 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
             <div className="play_forward_btn">
 
               {/* REWIND 10 SEC */}
-              <Replay10Icon onClick={()=>{wavesurfer.current.skipBackward(10)}}   />
+              <Replay10Icon className="btn_backward" onClick={()=>{wavesurfer.current.skipBackward(10)}}   />
               
               {/* PLAY PAUSE  */}
               <Button  onClick={handlePlayPause} className="btn_play">
-                {playing? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />}
+                {/* {playing? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} */}
+                {playing? <i class="fa fa-pause" aria-hidden="true"></i> : <i class="fa fa-play" aria-hidden="true"></i>}
               </Button>
 
               {/* FORWARD 10 SEC */}
-              <Forward10Icon onClick={()=>{wavesurfer.current.skipForward(10)}} />
-
+              <Forward10Icon className="btn_forward" onClick={()=>{wavesurfer.current.skipForward(10)}} />
             </div>
 
             {/* PLAYER STATUS */}
-            <Typography variant="subtitle">{`${secondsToTimestamp(playerStatus.current)} / ${secondsToTimestamp(playerStatus.total)}`}</Typography>
+            <Typography className="time_durations" variant="subtitle">{`${secondsToTimestamp(playerStatus.current)} / ${secondsToTimestamp(playerStatus.total)}`}</Typography>
            
             {/* PLAYBACK RATE */}
             <PlayBackButton wavesurfer={wavesurfer}/>

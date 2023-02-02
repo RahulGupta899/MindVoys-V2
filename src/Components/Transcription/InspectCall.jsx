@@ -117,15 +117,15 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                                     transcription.phrases
                                     ?
                                     transcription.phrases.speaker.map((item,idx)=>{
+          
                                       return (
-                                        <div className='text_con_repeat agent_row' key={idx}>
+                                        <div className={`text_con_repeat ${(item==='Agent'? 'agent_row': '')}`} key={idx}>
                                           <div className='text_con_name'>
                                             <h4>{item}</h4>
                                             <h5 
                                               onClick={()=>{jumpToText(transcription.phrases.timestamp[idx])}}
                                               className="timestamp" 
                                               timestamp={transcription.phrases.timestamp[idx]}
-
                                             >
                                               {secondsToTimestamp(transcription.phrases.timestamp[idx])}
                                             </h5>
@@ -135,11 +135,8 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                                       )
                                     })
                                     :
-                                    <div>bug fix</div>
-                                  }
-                                      <button id='dummy'>
-                                       DUMMY
-                                      </button>
+                                    <div></div>
+                                  }                            
                                 </div>
                                 
                             </div>

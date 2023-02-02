@@ -271,6 +271,7 @@ const Trasncriptions = ({value})=>{
             
             setSearchPageState(old=>({...old, isLoading:true}))
             const {data} = await axios.post(API_WithQuery,filter)
+            console.log("DATA: ",data)
             setSearchPageState(old=>({...old, isLoading:false, data: data.data, total: data.total}))
         }
         fetchData()
@@ -330,6 +331,7 @@ const Trasncriptions = ({value})=>{
                                         onKeyDown={(e)=>{
                                             if(e.key === 'Enter') handleOnSearch()
                                         }}
+                                        focused={false}
                                     />
                                     <Button className='search_icon'
                                         variant='contained'

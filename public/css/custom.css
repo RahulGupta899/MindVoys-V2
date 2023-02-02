@@ -756,6 +756,7 @@ body::-webkit-scrollbar-thumb {
   font-size: 14px;
   font-weight: 400;
   margin: 0 0 3px 0;
+  color: #094a95;
 }
 .text_con_repeat .text_con_name h5
 {
@@ -809,35 +810,190 @@ body::-webkit-scrollbar-thumb {
   margin-top: 10px;
 }
 .wave_controls {
-  border: 1px solid #edeaea;
+  border: 1px solid #f6f5f5;
     margin-top: 20px;
-    border-radius: 3px;
+    border-radius: 63px;
     padding: 8px 10px;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
-    background-color: #f8f8f8;
+    background-color: #f2eeff;
 }
 .play_forward_btn
 {
-  color: #283891;
+  color: #000;
 }
 .play_forward_btn .btn_play
 {
   
-  min-width: 36px;
-    padding: 0;
-    font-size: 37px;
+  min-width: auto;
+  padding: 0;
+  font-size: 28px;
+  margin: 0 15px;
+  border: 2px solid #4e4e52;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #1c1c1c;
+  transition-duration: 0.3s;
+}
+
+.play_forward_btn .btn_play:focus
+{
+  background-color: transparent !important;
 }
 .play_forward_btn .btn_play svg{
-  font-size: 33px;
+  font-size: 38px;
   color: #283891;
+}
+
+.btn_play .fa.fa-play
+{
+  padding-left: 4px;
+}
+
+.btn_backward,
+.btn_forward 
+{
+  width: 32px !important;
+  height: 32px !important;
+  border: 2px solid #4e4e52;
+  border-radius: 50%;
+  padding: 4px;
+  color: #1c1c1c;
+}
+.play_forward_btn .btn_play:hover,
+.play_forward_btn .btn_backward:hover,
+.play_forward_btn .btn_forward:hover
+{
+  background-color: var(--blue) !important;
+  color: #fff;
+  border-color:  var(--blue);
+  transition-duration: 0.3s;
+}
+.wave_controls .css-zqcytf-MuiButtonGroup-root .MuiButtonGroup-grouped
+{
+  background-color: #1550a3;
+  border-radius: 2px;
+}
+.wave_controls .css-sghohy-MuiButtonBase-root-MuiButton-root
+{
+  line-height: 1;
+  padding: 4px 8px;
+}
+.wave_controls .css-11qr2p8-MuiButtonBase-root-MuiButton-root
+{
+  padding: 2px 3px;
+  min-width: 30px !important;
+}
+.wave_controls .css-bx4uh6-MuiPopper-root
+{
+  z-index: 2;
+}
+.time_durations
+{
+  border: 2px solid #423c3c;
+  padding: 5px 27px;
+  border-radius: 30px;
+  color: #000;
+}
+
+.sound_range .css-1qx01vb-MuiStack-root
+{
+  margin-bottom: 0;
+}
+.sound_range .volume_up,
+.sound_range .volume_off
+{
+  font-size: 34px;
+}
+.sound_range .volume_up:hover,
+.sound_range .volume_off
+{
+  color: #172887;
 }
 #transcription_modal .modal-title
 {
   color: #000;
   font-size: 17px;
+}
+
+
+/* preloader */
+.wrapper{
+  width: 54px;
+  height: 25px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -27px;
+  margin-top: -10px;
+}
+#preloader_1{
+    position:relative;
+}
+#preloader_1 span{
+    display:block;
+    bottom:0px;
+    width: 9px;
+    height: 5px;
+    background:#9b59b6;
+    position:absolute;
+    animation: preloader_1 1.5s  infinite ease-in-out;
+}
+ 
+#preloader_1 span:nth-child(2){
+left:11px;
+animation-delay: .2s;
+ 
+}
+#preloader_1 span:nth-child(3){
+left:22px;
+animation-delay: .4s;
+}
+#preloader_1 span:nth-child(4){
+left:33px;
+animation-delay: .6s;
+}
+#preloader_1 span:nth-child(5){
+left:44px;
+animation-delay: .8s;
+}
+@keyframes preloader_1 {
+    0% {height:5px;transform:translateY(0px);background:#9b59b6;}
+    25% {height:30px;transform:translateY(15px);background:#283891;}
+    50% {height:5px;transform:translateY(0px);background:#9b59b6;}
+    100% {height:5px;transform:translateY(0px);background:#9b59b6;}
+}
+
+
+
+
+.table_style_comman .css-iclwpf .MuiDataGrid-cell--textCenter
+{
+  justify-content: flex-start !important;
+}
+.table_style_comman .css-iclwpf .MuiDataGrid-columnHeader:focus, 
+.table_style_comman .css-iclwpf .MuiDataGrid-cell:focus {
+  outline: none !important;
+}
+.t_search .css-1x5jdmq
+{
+  padding: 11.5px 14px !important;
+}
+.t_search .css-1v4ccyo.Mui-focused.MuiOutlinedInput-notChedOutlined
+{
+  outline: none !important;
+}
+
+
+.t_search .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline
+{
+  border: 1px solid #555 !important;
 }
 
 .timestamp:hover{
@@ -851,4 +1007,3 @@ body::-webkit-scrollbar-thumb {
     padding: 8px 10px;
     border-radius: 5px;
 }
-
