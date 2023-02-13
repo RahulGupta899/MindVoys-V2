@@ -1,13 +1,14 @@
-import React,{useRef,useEffect,useState} from 'react'
+import React,{useRef,useEffect,useState, useCallback} from 'react'
 import SearchIcon from '@mui/icons-material/Search';
 import {API_EndPoints} from '../../Helper/API_EndPoints'
 import axios from 'axios'
 import moment from 'moment'
 import Waveform from './Waveform';
+import SectionScores from "./SectionScores";
 import {secondsToTimestamp} from '../../Helper/helper'
 
 const InspectCall = ({callId,modelClose,setModelClose}) => {
-
+  
   // PARTICULAR CALL INFORMATION
   const [transcription,setTranscription] = useState({
     callDate: "",
@@ -15,6 +16,8 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
     agentName: "",
     phrases: null,
   })
+  const [sections,setSections] = useState(null)
+  const [qualityScore,setQualityScore] = useState(null)
 
 
   // USE EFFECT EXECUTES WHENEVER TRANSCRIPTION IS CHANGED , 
@@ -32,19 +35,31 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
       let url = data.transcription.transcriptionDetails.url
       let phrases = data.transcription.transcriptionDetails.phrases
       setTranscription({callDate,agentName,url,phrases})
+      setSections(data.sectionWiseScoresInfo)
+      setQualityScore(data.callQualityScore)
     })()
   },[callId,modelClose])
 
 
   // WAVESURFER 
   const wavesurfer = useRef(null)
+  const master = useRef(null)
   const phraseRef =  useRef(null)
   const [playing,setPlaying] = useState(false)
+  const [playerStatus,setPlayerStatus] = useState({
+    total: 0,
+    current: 0,
+    remaining: 0,
+  })
 
-  const jumpToText = (timestamp)=>{
+
+  const jumpToText = useCallback((timestamp)=>{
     setPlaying(true)
     wavesurfer.current.play(timestamp)
-  }
+    if(phraseRef.current) {
+      phraseRef.current.scrollIntoView({block: "center", inline: "nearest"});
+    }
+  },[])
 
   
   
@@ -70,12 +85,12 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
             </div>
 
             <div className="modal-body">
-              <section className='graph_sec comman_top'>
+              <section className='audio_player_sec'>
                 <div className="row">
 
                     {/* AUDIO COMPONENT */}
-                    <div className="col-lg-12 box_style_main">
-                        <div className="box_style">
+                    <div className="col-lg-12 box_style_main" >
+                        <div className="box_style wavesuffer_box">
                             <div className="box_style_body">
                               <div className="wavesurfer_player">
                                 {
@@ -90,6 +105,9 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                                     playing={playing} 
                                     setPlaying={setPlaying}
                                     phraseRef={phraseRef}
+                                    playerStatus={playerStatus}
+                                    setPlayerStatus={setPlayerStatus}
+                                    master={master}
                                   />
                                 }
                               </div>
@@ -102,43 +120,37 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                         <div className="box_style">
                           <div className="box_style_head">
                             <h2>Transcript</h2>
-                            {/* <div className="box_title_right">
-                              <div className='t_search'>
-                                <input type="text" className="form-control" placeholder='Search..' />
-                                <div className='search_icon'>
-                                  <button className="t_searach_btn"><SearchIcon /></button>
-                                </div>
-                              </div>
-                            </div> */}
                           </div>
-                            <div className="box_style_body" >
-                                <div ref={phraseRef} className='text_translate_area' style={{height:'380px', overflowY:'scroll',paddingRight:'30px'}}>
+                            <div className="box_style_body"  >
+                                <div className='text_translate_area scrollbar_style'ref={master} style={{overflowY:'scroll',paddingRight:'30px'}}>
                                   {
                                     transcription.phrases
                                     ?
                                     transcription.phrases.speaker.map((item,idx)=>{
-          
+                                      const phraseTimestamp = transcription.phrases.timestamp[idx]
                                       return (
                                         <div className={`text_con_repeat ${(item==='Agent'? 'agent_row': '')}`} key={idx}>
                                           <div className='text_con_name'>
                                             <h4>{item}</h4>
                                             <h5 
-                                              onClick={()=>{jumpToText(transcription.phrases.timestamp[idx])}}
+                                              onClick={()=>{jumpToText(phraseTimestamp)}}
                                               className="timestamp" 
-                                              timestamp={transcription.phrases.timestamp[idx]}
                                             >
-                                              {secondsToTimestamp(transcription.phrases.timestamp[idx])}
+                                              {secondsToTimestamp(phraseTimestamp)}
                                             </h5>
                                           </div>
-                                          <div className='text_con_chat' id={`phrase${idx}`}>{transcription.phrases.text[idx]}</div>
+                                          <div 
+                                            className={`text_con_chat ${(playerStatus.current>phraseTimestamp)? "active-text": ''}`}
+                                            ref={(playerStatus.current>phraseTimestamp)?phraseRef:null}
+                                          >{transcription.phrases.text[idx]}</div>
                                         </div>
                                       )
                                     })
                                     :
                                     <div></div>
-                                  }                            
+                                  } 
+                                  {/* <button>hello</button>                            */}
                                 </div>
-                                
                             </div>
                         </div>
                     </div>
@@ -146,12 +158,15 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                     {/* SECTION WISE SCORE */}
                     <div className="col-lg-4 box_style_main">
                         <div className="box_style">
+                            <div className="box_style_head tagName_container">
+                              <h2>Scorecard</h2>
+                              <h5>{qualityScore}%</h5>
+                            </div>
                             <div className="box_style_body">
-                                score space
+                                <SectionScores jumpToText={jumpToText} sections={sections}/>
                             </div>
                         </div>
                     </div>
-
                 </div>
               </section>
             </div>

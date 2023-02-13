@@ -2,7 +2,6 @@ import React,{useState,useEffect} from 'react'
 import {DataGrid} from '@mui/x-data-grid'
 import moment from 'moment/moment'
 import PhoneForwardedIcon from '@mui/icons-material/PhoneForwarded';
-import {NavLink,useLocation} from 'react-router-dom'
 import axios from 'axios';
 import {API_EndPoints} from '../../Helper/API_EndPoints'
 import {Button, TextField} from '@mui/material'
@@ -279,7 +278,10 @@ const Trasncriptions = ({value})=>{
 
     // FETCH SEARCHED CALLS
     const handleOnSearch = async()=>{
-        if(searchText === "") return 
+        if(searchText === ""){
+            handleClearSearch() 
+            return
+        } 
         setSearchPageState((state)=>{
             return {
                 ...state,
@@ -318,9 +320,7 @@ const Trasncriptions = ({value})=>{
             <section className='graph_sec comman_top'>
                 <div className="row">
                     <div className="col-lg-12 box_style_main" >
-                        
                         <div className="box_style">
-
                             {/* SEARCH BOX */}
                             <div className="box_style_head">
                                 <div className='t_search'>

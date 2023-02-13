@@ -8,7 +8,6 @@ import {
     Box
 } from '@mui/material'
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-
 import Filter from './Filter'
 import {FilterContext} from './FilterContext'
 import Footer from '../Footer/Footer'
@@ -164,3 +163,18 @@ function Header({Children}){
 
 
 export default Header
+
+/*
+mindVoys: Speech Analytics application to track the performace of agents of a call center
+progress: so as of now we have built the Dashboard page where the end user will have access to all the stats related to calls and 
+          we have Transcription page - where user can see the list of all calls attended by the agents , also word or text searching is also there
+
+
+        - we have started building this recently
+        - Haven't made any authentication system
+        - we are trying to first achieve the main part then we will moving on the users 
+        
+
+
+
+          */

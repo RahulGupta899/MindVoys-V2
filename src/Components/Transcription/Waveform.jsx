@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Button,Slider,Stack,Box,Typography,CircularProgress, CircularProgressWithLabel} from '@mui/material'
+import {Button,Slider,Stack,Box,Typography,CircularProgress, CircularProgressWithLabel, fabClasses} from '@mui/material'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import PlayBackButton from "./PlayBackButton";
 import Replay10Icon from '@mui/icons-material/Replay10';
 import Forward10Icon from '@mui/icons-material/Forward10';
 import WaveSurfer from "wavesurfer.js";
+import {secondsToTimestamp} from '../../Helper/helper'
+
 
 const formWaveSurferOptions = ref => ({
   container: ref,
@@ -24,28 +26,21 @@ const formWaveSurferOptions = ref => ({
 });
 
 
-export default function Waveform({transcription,wavesurfer,playing,setPlaying,phraseRef}){
+export default function Waveform({transcription,wavesurfer,playing,setPlaying,phraseRef,playerStatus,setPlayerStatus}){
     
     const waveformRef = useRef(null)
+    if(phraseRef.current) {
+      phraseRef.current.scrollIntoView({block: "center", inline: "nearest"});
+    }
 
     // CONTROLS STATE
     const [volume,setVolume] = useState(0.4)
     const [mute,setMute] = useState(false)
-    const [playerStatus,setPlayerStatus] = useState({
-      total: 0,
-      current: 0,
-      remaining: 0,
-    })
     const [loading,setLoading] = useState(0)
 
-
-
-    
-
     useEffect(()=>{
-        console.log("USE-EFFECT RE-rendered...")
         setLoading(0)
-        setAudioLoaded(true)
+        setAudioLoading(true)
         setPlaying(false)
         setPlayerStatus({
           total: 0,
@@ -63,17 +58,14 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
 
         //DURING LOADING IT WILL EXECUTE
         wavesurfer.current.on("loading",(percent)=>{
-          console.log("EXEC")
-          console.log("LOADING....",percent)
           if(percent !== 100)
           setLoading(percent)
         })
 
         // ON URL LOAD IT RUNS 
         wavesurfer.current.on('ready',()=>{
-          console.log("----READY----")
           setLoading(100)
-          setAudioLoaded(false)
+          setAudioLoading(false)
         })
 
         // WHEN AUDIO IS PLAYING
@@ -83,36 +75,11 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
               let totalTime = wavesurfer.current.getDuration(),
                   currentTime = wavesurfer.current.getCurrentTime(),
                   remainingTime = totalTime - currentTime;
-                  console.log("Total time: ",totalTime)
-                  console.log("Current Time: ",currentTime)
               setPlayerStatus({
                 total: totalTime,
                 current: currentTime,
                 remaining: remainingTime
               })  
-              
-
-              //SYNCING PART (APPROACH 1)
-              let transcriptDiv = phraseRef.current.childNodes
-
-              transcriptDiv = Array.from(transcriptDiv)
-              transcriptDiv.map((div)=>{
-
-                let timestamp = div.childNodes[0].childNodes[1]
-                if(timestamp) timestamp = timestamp.getAttribute('timestamp')
-                const phrase = div.childNodes[1]
-                if(currentTime >= Number(timestamp)){
-                  phrase.classList.add('active-text')
-                  div.childNodes[0].childNodes[1].scrollIntoView({
-                    behavior:'smooth'
-                  })
-                  console.log("Timestamp: ",timestamp)
-                }
-                if(currentTime < Number(timestamp)) phrase.classList.remove('active-text')
-              })
-
-              //SYNCING PART (APPROACH 2)
-
             }
        
         });
@@ -145,38 +112,34 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
     //-------------------------------
     // HELPER FUNCTIONS
     //-------------------------------
-    const secondsToTimestamp= (seconds)=>{
-      seconds = Math.floor(seconds);
-      let h = Math.floor(seconds / 3600);
-      let m = Math.floor((seconds - (h * 3600)) / 60);
-      let s = seconds - (h * 3600) - (m * 60);
+    // const secondsToTimestamp= (seconds)=>{
+    //   seconds = Math.floor(seconds);
+    //   let h = Math.floor(seconds / 3600);
+    //   let m = Math.floor((seconds - (h * 3600)) / 60);
+    //   let s = seconds - (h * 3600) - (m * 60);
 
-      // FORMATTING FOR SINGLE DIGIT
-      h = h < 10 ? '0' + h : h;
-      m = m < 10 ? '0' + m : m;
-      s = s < 10 ? '0' + s : s;
-      return h + ':' + m + ':' + s;
-    }
+    //   // FORMATTING FOR SINGLE DIGIT
+    //   h = h < 10 ? '0' + h : h;
+    //   m = m < 10 ? '0' + m : m;
+    //   s = s < 10 ? '0' + s : s;
+    //   return h + ':' + m + ':' + s;
+    // }
 
 
     // VOLUME BAR HIDE AMINATION
     const [sliderActive,setSliderActive] = useState('none') 
 
     // AUDIO LOADER STATE
-    const [AudioLoaded,setAudioLoaded] = useState(true) 
+    const [AudioLoading,setAudioLoading] = useState(true) 
 
 
     return(
       <>
       
-      
-        {/* WAVEFORM */}
-        <div id="waveform" ref={waveformRef} />
         {
-          AudioLoaded
-          ?
+          AudioLoading
+          &&
           <div className="loader_style">   
-            {/*<CircularProgress className="loader_icon"></CircularProgress>  */}
             <div className="wrapper">              
               <div id="preloader_1">
                   <h6>{loading}%</h6>
@@ -185,34 +148,34 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
               </div>            
             </div>          
             </div>
-          :
+        }
 
-          // AUDIO CONTROLLER
-          <Stack direction='row'  spacing={4} className="controls wave_controls">
-
-            <div className="play_forward_btn">
-
+        <div  className="audio_player_wrap"> 
+          <div className="audio_player_top">
+            {/* PLAY PAUSE  */}
+            <Button  onClick={handlePlayPause} className="btn_play">
+                  {playing? <i class="fa fa-pause" aria-hidden="true"></i> : <i class="fa fa-play" aria-hidden="true"></i>}
+            </Button>
+            {/* WAVEFORM */}
+            <div id="waveform" ref={waveformRef} style={{width:'100%'}}/>
+          </div>
+          <div className="audio_player_bottom">
+            <div className="audio_left">
+              {/* PLAYER STATUS */}
+              <Typography className="time_durations" variant="subtitle">{`${secondsToTimestamp(playerStatus.current)} / ${secondsToTimestamp(playerStatus.total)}`}</Typography>
+            </div>
+            <div className="audio_right">
               {/* REWIND 10 SEC */}
               <Replay10Icon className="btn_backward" onClick={()=>{wavesurfer.current.skipBackward(10)}}   />
-              
-              {/* PLAY PAUSE  */}
-              <Button  onClick={handlePlayPause} className="btn_play">
-                {/* {playing? <PauseCircleOutlineIcon /> : <PlayCircleOutlineIcon />} */}
-                {playing? <i class="fa fa-pause" aria-hidden="true"></i> : <i class="fa fa-play" aria-hidden="true"></i>}
-              </Button>
 
               {/* FORWARD 10 SEC */}
               <Forward10Icon className="btn_forward" onClick={()=>{wavesurfer.current.skipForward(10)}} />
-            </div>
 
-            {/* PLAYER STATUS */}
-            <Typography className="time_durations" variant="subtitle">{`${secondsToTimestamp(playerStatus.current)} / ${secondsToTimestamp(playerStatus.total)}`}</Typography>
-           
-            {/* PLAYBACK RATE */}
+              {/* PLAYBACK RATE */}
             <PlayBackButton wavesurfer={wavesurfer}/>
 
             {/* VOLUME */}
-            <Box sx={{ width: 200 }}>
+            <Box className="sound_range" >
               <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
                 {
                   mute
@@ -238,11 +201,11 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
                 />
               </Stack>
             </Box>
-          </Stack>
+            
+          </div>
+          </div>       
           
-        }
-        
-      
+        </div>
       </>
 
 
