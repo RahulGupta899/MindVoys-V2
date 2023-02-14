@@ -167,6 +167,7 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                             </div>
                         </div>
                     </div>
+                    
                 </div>
               </section>
             </div>

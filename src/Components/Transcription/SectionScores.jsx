@@ -6,6 +6,7 @@ import {
     Typography
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import {secondsToTimestamp} from '../../Helper/helper'
 
 const SectionScores = ({jumpToText,sections})=>{
 
@@ -82,8 +83,8 @@ const SectionScores = ({jumpToText,sections})=>{
                                                                                 className='matchedText'
                                                                                 onClick={()=>{jumpToText(item.phraseTimeStamp)}} 
                                                                                 style={{cursor:'pointer', color:'#000532', margin:'8px 3px'}}>
-                                                                                     <span style={{color:'#05458f'}}>Time: </span> 
-                                                                                     {` ${item.phraseText.substring(0,100)}... `} 
+                                                                                     <span style={{color:'#05458f',fontFamily:'monospace'}}>{`${secondsToTimestamp(item.phraseTimeStamp)}:`} </span> 
+                                                                                     {` ${item.phraseText.substring(0,30)}... `} 
                                                                             </div>
                                                                 })
                                                             }                                    

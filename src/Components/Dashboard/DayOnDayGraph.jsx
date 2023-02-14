@@ -79,6 +79,10 @@ const DayOnDayGraph = ({graphData}) => {
         }
     },
     scales: {
+        x: {
+            // min: 0,
+            // max: 6
+        },
         y: {           
             beginAtZero: true,
             position: 'left',
