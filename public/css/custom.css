@@ -1,6 +1,6 @@
 :root
 {
-    --blue: #283891 ;
+  --blue: #283891 ;
   --white: #fff;
   --gray_light: #f8f4f4;
   --gray_dark: #595959;
@@ -14,6 +14,7 @@ body
   margin: 0;
   font-size: 15px;
   font-weight: 400;
+  cursor: default;
 }
 h1,h2,h3,h4,h5,h6
 {
@@ -48,7 +49,6 @@ h1,h2,h3,h4,h5,h6
 .box_style .box_style_head
 {
   /* border-bottom: 1px solid #e3e6e8; */
-  
   margin: 0 0 20px 0;
 }
 .box_style .box_style_head.two_coll
@@ -88,11 +88,10 @@ h1,h2,h3,h4,h5,h6
   border-radius: 3px;
   color: #fff;
 }
-
 /* scrollbar_comman */
 .scrollbar_style::-webkit-scrollbar{
         border-radius: 10px;
-        width: 10px;
+        width: 6px;
         box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 }
 .scrollbar_style::-webkit-scrollbar-thumb{
@@ -104,17 +103,14 @@ h1,h2,h3,h4,h5,h6
 body::-webkit-scrollbar {
   width: 5px;
 }
-
 /* Track */
 body::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
-
 /* Handle */
 body::-webkit-scrollbar-thumb {
   background: #888;
 }
-
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
@@ -313,7 +309,6 @@ body::-webkit-scrollbar-thumb {
 {
   width: 100px;
 }
-
 .react-daterange-picker
 {
   height: 48px;
@@ -323,7 +318,6 @@ body::-webkit-scrollbar-thumb {
 {
   border-radius: 5px;
   border-color: #bab3b3 !important;
-
 }
 .react-daterange-picker__inputGroup__input:focus
 {
@@ -338,7 +332,6 @@ body::-webkit-scrollbar-thumb {
   background: #b1d4f7 !important;
   color: #0a0a0a !important;
 }
-
 .css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root.Mui-selected
 {
   background-color: #c3d1f4 !important;
@@ -511,17 +504,10 @@ body::-webkit-scrollbar-thumb {
   margin: 0;
   font-size: 14px;
 }
-
 /* table_style_comman */
 .table_style_comman
 {
-
 }
-
-
-
-
-
 /* 
 .css-gl260s-MuiDataGrid-columnHeadersInner
 {
@@ -529,7 +515,6 @@ body::-webkit-scrollbar-thumb {
 }
 .css-1e2bxag-MuiDataGrid-root .MuiDataGrid-columnHeaderTitleContainer
 {
-  
 }
 .MuiDataGrid-columnHeader
 {
@@ -538,7 +523,6 @@ body::-webkit-scrollbar-thumb {
     width: auto !important;
     min-width: auto !important;
     max-width: 100% !important;
-
 }
 .MuiDataGrid-row .MuiDataGrid-cell,
 .MuiDataGrid-cell
@@ -554,7 +538,6 @@ body::-webkit-scrollbar-thumb {
 .css-1e2bxag-MuiDataGrid-root .MuiDataGrid-row
 {
   width: 100% !important;
-  
 }
 #transcription_tbl .MuiDataGrid-virtualScrollerRenderZone .MuiDataGrid-row .MuiDataGrid-cell:last-child
 {
@@ -564,19 +547,16 @@ body::-webkit-scrollbar-thumb {
 {
   position: relative;
 } */
-
 .table_style_comman .MuiDataGrid-columnHeaders
 {
   background-color: #dde1f4;
 }
-
 .table_style_comman .css-1e2bxag-MuiDataGrid-root .MuiDataGrid-cell--textCenter,
 .table_style_comman .MuiDataGrid-columnHeaderTitleContainer
 {
   -webkit-justify-content: flex-start !important;
   justify-content: flex-start !important;
 }
-
 .table_style_comman .css-1e2bxag-MuiDataGrid-root .MuiDataGrid-columnHeader:focus, 
 .table_style_comman .css-1e2bxag-MuiDataGrid-root .MuiDataGrid-cell:focus,
 .table_style_comman .css-1e2bxag-MuiDataGrid-root .MuiDataGrid-columnHeader:focus-within, 
@@ -663,7 +643,6 @@ body::-webkit-scrollbar-thumb {
 /*  */
 .trans_modal
 {
-  
 }
 .trans_modal {
   z-index: 9999;
@@ -675,10 +654,11 @@ body::-webkit-scrollbar-thumb {
   width: 100%;
   top: 0;
 }
-.text_translate_area
+.text_translate_area,
+#tag_score_area
 {
-  height: calc(100vh - 385px);
-  
+  height: calc(100vh - 322px);
+  overflow-y: auto;
 }
 .modal.trans_modal .modal-dialog
 {
@@ -748,12 +728,10 @@ body::-webkit-scrollbar-thumb {
   padding: 0 6px;
   height: 100%;
 }
-
-
 .text_con_repeat
 {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 .text_con_repeat .text_con_name
 {
@@ -762,12 +740,13 @@ body::-webkit-scrollbar-thumb {
 .text_con_repeat .text_con_chat
 {
   /* padding-left: 30px; */
+  font-size: 14px;
 }
 .text_con_repeat .text_con_name h4
 {
   font-size: 14px;
   font-weight: 400;
-  margin: 0 0 3px 0;
+  margin: 0 0 1px 0;
   color: #094a95;
 }
 .text_con_repeat .text_con_name h5
@@ -782,10 +761,9 @@ body::-webkit-scrollbar-thumb {
 {
   color: #eb6d10 !important;
 }
-
 /* tooltip */
-
-.css-ja5taz-MuiTooltip-tooltip
+.css-ja5taz-MuiTooltip-tooltip,
+.css-1spb1s5
 {
   background-color: #283891 !important;
   padding: 10px 20px !important;
@@ -798,9 +776,6 @@ body::-webkit-scrollbar-thumb {
   height: 30px;
   border: 1px solid #ccc;
 } */
-
-
-
 /* loader style */
 .loader_style 
 {
@@ -818,10 +793,17 @@ body::-webkit-scrollbar-thumb {
 }
 .audio_player_sec
 {
-  margin-top: 7px;
+  /* margin-top: 0px; */
 }
 .box_style.wavesuffer_box
 {
+  padding: 10px 15px 6px 15px;
+}
+.trans_modal .box_style_main
+{
+  margin-bottom: 12px;
+}
+.trans_modal .box_style{
   padding: 15px 15px;
 }
 .audio_payer_sec
@@ -848,7 +830,7 @@ body::-webkit-scrollbar-thumb {
 .audio_player_bottom
 {
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 .audio_player_bottom .audio_right {
   display: flex;
@@ -862,7 +844,6 @@ body::-webkit-scrollbar-thumb {
 }
 .audio_player_top .btn_play
 {
-  
   min-width: auto;
   padding: 0;
   font-size: 28px;
@@ -877,7 +858,6 @@ body::-webkit-scrollbar-thumb {
   color: #1c1c1c;
   transition-duration: 0.3s;
 }
-
 .audio_player_top .btn_play:focus
 {
   background-color: transparent !important;
@@ -886,12 +866,10 @@ body::-webkit-scrollbar-thumb {
   font-size: 38px;
   color: #283891;
 }
-
 .btn_play .fa.fa-play
 {
   padding-left: 4px;
 }
-
 .btn_backward,
 .btn_forward 
 {
@@ -921,18 +899,24 @@ body::-webkit-scrollbar-thumb {
   margin-left: 15px;
   width: 100px;
 }
-.audio_player_bottom .css-zqcytf-MuiButtonGroup-root
+.audio_player_bottom .css-zqcytf-MuiButtonGroup-root,
+.css-tn4v5h
 {
   box-shadow: none !important;
   border-radius: 0;
 }
-.audio_player_bottom .css-zqcytf-MuiButtonGroup-root .MuiButtonGroup-grouped
+.audio_player_bottom .css-zqcytf-MuiButtonGroup-root .MuiButtonGroup-grouped,
+.css-tn4v5h .MuiButtonGroup-grouped:not(:last-of-type),
+.css-1lpukdo,
+.css-1hw9j7s
 {
   border: none;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
   border-radius: 2px;
-  color: #000;
+  color: #000 !important;
   border-color: transparent !important;
+  padding:1px 6px !important;
+  box-shadow:none !important;
 }
 .audio_player_bottom .css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root
 {
@@ -958,7 +942,6 @@ body::-webkit-scrollbar-thumb {
   color: #000;
   padding-left: 77px;
 }
-
 .sound_range .css-1qx01vb-MuiStack-root
 {
   margin-bottom: 0;
@@ -978,8 +961,6 @@ body::-webkit-scrollbar-thumb {
   color: #000;
   font-size: 17px;
 }
-
-
 /* preloader */
 .wrapper{
   width: 54px;
@@ -992,6 +973,7 @@ body::-webkit-scrollbar-thumb {
 }
 #preloader_1{
     position:relative;
+    text-align: center;
 }
 #preloader_1 span{
     display:block;
@@ -1002,11 +984,9 @@ body::-webkit-scrollbar-thumb {
     position:absolute;
     animation: preloader_1 1.5s  infinite ease-in-out;
 }
- 
 #preloader_1 span:nth-child(2){
 left:11px;
 animation-delay: .2s;
- 
 }
 #preloader_1 span:nth-child(3){
 left:22px;
@@ -1026,10 +1006,6 @@ animation-delay: .8s;
     50% {height:5px;transform:translateY(0px);background:#9b59b6;}
     100% {height:5px;transform:translateY(0px);background:#9b59b6;}
 }
-
-
-
-
 .table_style_comman .css-iclwpf .MuiDataGrid-cell--textCenter
 {
   justify-content: flex-start !important;
@@ -1046,28 +1022,22 @@ animation-delay: .8s;
 {
   outline: none !important;
 }
-
-
 .t_search .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline
 {
   border: 1px solid #555 !important;
 }
-
 .timestamp:hover{
   cursor: pointer;
   text-decoration: underline;
 }
-
 .active-text{
   background-color: #d6e6f5;
     color: #000000;
     padding: 8px 10px;
     border-radius: 5px;
     /* transition-duration: 0.3s; 
-    -webkit-animation-name: fadeOut; 
-    animation-name: fadeOut; */
+    -webkit-animation-name: fadeOut;     animation-name: fadeOut; */
 }
-
 @-webkit-keyframes fadeOut {
   0% {opacity: 1;}
   100% {opacity: 0;}
@@ -1076,14 +1046,119 @@ animation-delay: .8s;
   0% {opacity: 1;}
   100% {opacity: 0;}
 }
-
 .tagName_container{
-  display: flex !important;
-  justify-content: space-between;
+  /* display: flex !important;
+  justify-content: space-between; */
+}
+.tagName_container h5
+{
+  font-size: 15px;
+  color: var(--blue);
+  font-weight: 700;
+  margin: 0;
+}
+.matchedText
+{
+  transition: all 0.3s ease;
+}
+.matchedText:hover{
+  /* font-weight: bold; */
+  cursor:pointer;
+  color: #eb6d10 !important;
+  transition: all 0.3s ease;
+}
+/*  */
+.score_accordian
+{
+  padding-right: 7px;
+}
+.score_accordian .css-1betqn-MuiAccordionSummary-content
+{
+  margin: 9px 0;
+}
+.score_accordian .css-d75ddq-MuiButtonBase-root-MuiAccordionSummary-root
+{
+  min-height: 40px !important;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.score_accordian .acc_card
+{
+  background-color: #eef5fb;
+  border-radius: 4px;
+  /* margin-bottom: 10px; */
+}
+.score_accordian .acc_card_heading
+{
+}
+.score_accordian .acc_card_heading
+{
+  color:#191992;
+  font-size: 14px;
+}
+.score_accordian .badge_score{
+  background-color: #e9ecef;
+  padding: 4px 6px;
+  color: #161515;
+  border-radius: 3px;
+  line-height: 1;
+  font-weight: 400;
+  font-size: 11px;
+  margin-left: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  
+}
+.score_accordian .MuiPaper-root 
+{
+  margin-bottom: 10px;
+  box-shadow: none;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+.score_accordian .css-1wc0u5o-MuiPaper-root-MuiAccordion-root.Mui-expanded {
+  background-color: #f8fcff;
+  padding: 0;
+}
+.score_accordian .css-15v22id-MuiAccordionDetails-root
+{
+}
+.score_accordian .css-1wc0u5o-MuiPaper-root-MuiAccordion-root:before
+{
+  display: none !important;
+}
+.score_accordian .css-713icj-MuiTypography-root
+{
+  font-size: 14px;
+}
+.score_accordian .css-ns9v14-MuiTypography-root,
+.score_accordian .css-ahj2mt-MuiTypography-root
+{
+  font-size: 14px;
+}
+.matchCount,
+.matchCountZero
+{
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.matchCount{
+  background-color: #1162bb;
+  color: #ffffff;
+}
+.matchCountZero{
+  background-color: #fe4a4a;
+  color: #ffffff;
 }
 
-.matchedText:hover{
-  font-weight: bold;
-  cursor:'pointer'
-}
+
+
 

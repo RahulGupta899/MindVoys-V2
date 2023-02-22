@@ -47,6 +47,7 @@ const ParetoChart = ({paretoData}) => {
             type: 'bar',
             label: 'Error in Absolute',
             backgroundColor: '#1C315E',
+            // backgroundColor: '#D6E4E5',
             data: errors,
             borderColor: 'white',
             borderWidth: 1,
@@ -57,11 +58,11 @@ const ParetoChart = ({paretoData}) => {
             type: 'line',
             label: 'Errors in Percentage',
             borderColor: '#FF0032',
-            // borderColor: '#1C315E',
-            borderWidth: 2,
+            // borderColor: '#EB6440',
+            borderWidth: 1.5,
             fill: false,
             data: cumulativePercentage,
-            tension: 0.1,
+            tension: 0.4,
             yAxisID: 'percentage',
             order: 1
         }
@@ -76,6 +77,11 @@ const ParetoChart = ({paretoData}) => {
         }
     },
     scales: {
+        x:{
+            grid:{
+                drawOnChartArea: false
+            }
+        },
         y: {           
             beginAtZero: true,
             position: 'left',
@@ -83,6 +89,7 @@ const ParetoChart = ({paretoData}) => {
                 min:0,
                 max: 100
             },
+            
             // title:{
             //     display: true,
             //     text: 'Count',

@@ -158,12 +158,14 @@ const InspectCall = ({callId,modelClose,setModelClose}) => {
                     {/* SECTION WISE SCORE */}
                     <div className="col-lg-4 box_style_main">
                         <div className="box_style">
-                            <div className="box_style_head tagName_container">
+                            <div className="box_style_head two_coll tagName_container">
                               <h2>Scorecard</h2>
                               <h5>{qualityScore}%</h5>
                             </div>
                             <div className="box_style_body">
+                              <div className='score_accordian scrollbar_style ' id="tag_score_area">
                                 <SectionScores jumpToText={jumpToText} sections={sections}/>
+                              </div>
                             </div>
                         </div>
                     </div>

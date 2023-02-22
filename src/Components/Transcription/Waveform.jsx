@@ -15,10 +15,10 @@ const formWaveSurferOptions = ref => ({
   progressColor: "#283891",
   progressColor: "black",
   cursorColor: "black",
-  barWidth: 3,
-  barRadius: 3,
+  barWidth: 2.5,
+  barRadius: 2,
   responsive: true,
-  height: 100,
+  height: 80,
   normalize: true,
   partialRender: true,
   hideScrollbar: true,
@@ -84,6 +84,11 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
        
         });
 
+        wavesurfer.current.on('finish', function () {
+          console.log("FINISHED>>>>>")
+          setPlaying(false)
+        });
+
         return () => wavesurfer.current.destroy();
     },[transcription])
 
@@ -107,24 +112,6 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
       setMute((state)=>!state)
       wavesurfer.current.toggleMute()
     }
-
-
-    //-------------------------------
-    // HELPER FUNCTIONS
-    //-------------------------------
-    // const secondsToTimestamp= (seconds)=>{
-    //   seconds = Math.floor(seconds);
-    //   let h = Math.floor(seconds / 3600);
-    //   let m = Math.floor((seconds - (h * 3600)) / 60);
-    //   let s = seconds - (h * 3600) - (m * 60);
-
-    //   // FORMATTING FOR SINGLE DIGIT
-    //   h = h < 10 ? '0' + h : h;
-    //   m = m < 10 ? '0' + m : m;
-    //   s = s < 10 ? '0' + s : s;
-    //   return h + ':' + m + ':' + s;
-    // }
-
 
     // VOLUME BAR HIDE AMINATION
     const [sliderActive,setSliderActive] = useState('none') 
@@ -154,7 +141,7 @@ export default function Waveform({transcription,wavesurfer,playing,setPlaying,ph
           <div className="audio_player_top">
             {/* PLAY PAUSE  */}
             <Button  onClick={handlePlayPause} className="btn_play">
-                  {playing? <i class="fa fa-pause" aria-hidden="true"></i> : <i class="fa fa-play" aria-hidden="true"></i>}
+                  {playing? <i className="fa fa-pause" aria-hidden="true"></i> : <i className="fa fa-play" aria-hidden="true"></i>}
             </Button>
             {/* WAVEFORM */}
             <div id="waveform" ref={waveformRef} style={{width:'100%'}}/>

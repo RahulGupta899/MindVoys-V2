@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,memo} from 'react'
 import {
     Accordion,
     AccordionDetails,
@@ -29,6 +29,7 @@ const SectionScores = ({jumpToText,sections})=>{
             {
                 sections &&
                 sections.map((section)=>{
+                    console.log(section)
                     let sectionPercent = ((section.sectionObtained/section.sectionTotal)*100).toFixed(2)
                     sectionPercent = (sectionPercent === '0.00' ? 0 : sectionPercent)
                     // sectionPercent = (sectionPercent === '100.00' ? 100 : sectionPercent)
@@ -39,18 +40,16 @@ const SectionScores = ({jumpToText,sections})=>{
                             disableGutters={true}
                         >
                             <AccordionSummary
-                            expandIcon={<ExpandMoreIcon/>}
-                            sx={{background:'#f5f5f5'}}
+                                className = 'acc_card'
+                                expandIcon={<ExpandMoreIcon/>}
+                                sx={{background:'#f5f5f5'}}
                             >
-                                <div  style={{display:'flex', justifyContent:'space-between', width:'100%'}}> 
+                                <div  className='acc_card_heading_bx' style={{display:'flex', justifyContent:'space-between', width:'100%'}}> 
                                 <Typography vaiant="h6" 
-                                    sx={{
-                                        color:'#191992',
-                                        fontWeight:'800', 
-                                        marginRight:'100px',                            
-                                    }}
-                                >{section.sectionName}</Typography>
-                                <Typography  sx={{color:'#56567a',fontSize:'15px'}}>{sectionPercent}%</Typography>
+                                    className='acc_card_heading'
+                                >{section.sectionName} <span class="badge badge_score">{`${section.sectionObtained}/${section.sectionTotal}`}</span> </Typography>
+                                
+                                <Typography className='acc_card_score' sx={{color:'#56567a',fontSize:'15px'}}>{sectionPercent}%</Typography>
                                 </div>
                             </AccordionSummary>
                             <AccordionDetails>
@@ -66,14 +65,12 @@ const SectionScores = ({jumpToText,sections})=>{
                                                     <AccordionSummary
                                                         sx={{background:'#f5f5f5'}}
                                                         >
-                                                            <div  style={{display:'flex', justifyContent:'space-between', width:'100%'}}> 
-                                                            <Typography vaiant="subtitle" 
-                                                                sx={{
-                                                                    color:'#191992',
-                                                                    fontWeight:'400'                           
-                                                                }}
-                                                            >{tag.tag}</Typography>
-                                                            <Typography >{tagPercent}%</Typography>
+                                                            <div  style={{display:'flex', justifyContent:'space-between',alignItems:'center', width:'100%'}}> 
+                                                                {/* <div style={{display:'flex'}}> */}
+                                                                    <Typography vaiant="subtitle" >{tag.tag} <span class="badge badge_score">{tag.weightage}</span></Typography>
+                                                                                
+                                                                {/* </div> */}
+                                                                <div className={`${tag.matches.length>0 ? 'matchCount' : 'matchCountZero'}`}>{tag.matches.length}</div>                                                            
                                                             </div>
                                                         </AccordionSummary>
                                                         <AccordionDetails>
@@ -83,8 +80,8 @@ const SectionScores = ({jumpToText,sections})=>{
                                                                                 className='matchedText'
                                                                                 onClick={()=>{jumpToText(item.phraseTimeStamp)}} 
                                                                                 style={{cursor:'pointer', color:'#000532', margin:'8px 3px'}}>
-                                                                                     <span style={{color:'#05458f',fontFamily:'monospace'}}>{`${secondsToTimestamp(item.phraseTimeStamp)}:`} </span> 
-                                                                                     {` ${item.phraseText.substring(0,30)}... `} 
+                                                                                     <span style={{color:'#05458f',fontFamily:'monospace',fontSize:'12px'}}>{`${secondsToTimestamp(item.phraseTimeStamp)}:`} </span> 
+                                                                                     {` ${item.phraseText.substring(0,25)}... `} 
                                                                             </div>
                                                                 })
                                                             }                                    
@@ -104,4 +101,4 @@ const SectionScores = ({jumpToText,sections})=>{
     )
 }
 
-export default SectionScores
+export default memo(SectionScores)

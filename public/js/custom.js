@@ -40,3 +40,4 @@ const modal = document.querySelector("#transcription_modal");
                 body.style.overflow = "auto";
             }
         };
+

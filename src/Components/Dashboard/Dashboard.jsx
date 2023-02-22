@@ -8,7 +8,7 @@ import { API_EndPoints } from '../../Helper/API_EndPoints'
 import axios from 'axios'
 
 const Dashboard = (props) => {
-    
+    console.log("DASHBOARD COMPONENT")
     // FILTER STATES
     const {value} = props
     const {
@@ -20,9 +20,10 @@ const Dashboard = (props) => {
         callDuration,
         filterController
     } = value
-
+    
     // DASHBOARD STATE
     const [dashboardData,setDashboardData] = useState(null)
+    console.log("DASHBOARD: ",dashboardData)
 
     // FETCH DASHBOARD DATA 
     useEffect(() => {
@@ -31,6 +32,7 @@ const Dashboard = (props) => {
         const {API_POST_calls_QS_AHT_AgentCount} = API_EndPoints
         const options = {dateRange,l2Manager,l1Manager,agentName,tenure,callDuration}
         const {data} = await axios.post(API_POST_calls_QS_AHT_AgentCount,options)
+        console.log("useEffect: ",data.analytics)
         setDashboardData(data.analytics)
       }
       fetchDashboardInfo()
@@ -133,7 +135,7 @@ const Dashboard = (props) => {
                             </div>
                             <div className="box_style_body">
                                 {
-                                    dashboardData
+                                    dashboardData && dashboardData.dodData && dashboardData.dodData.dates.length
                                     ?
                                     <DayOnDayGraph graphData={dashboardData.dodData}/>
                                     :
