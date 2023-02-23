@@ -376,6 +376,7 @@ const Trasncriptions = ({value})=>{
                                         onPageChange={(newPage) => setPageState(old=>({...old,page:newPage}))}
                                         onPageSizeChange={(newPageSize) => setPageState(old=>({...old, pageSize:newPageSize}))}
                                         columns={columns}
+                                        // columnVisibilityModel={{callDate: false}}
                                     />
                                     :
                                     <DataGrid
@@ -405,9 +406,7 @@ const Trasncriptions = ({value})=>{
             {/* MODAL */}
             <InspectCall callId={callId} modelClose={modelClose} setModelClose={setModelClose} />
         </>
-    )
-    
-        
+    )    
 }
 
 

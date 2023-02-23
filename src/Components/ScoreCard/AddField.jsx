@@ -18,7 +18,7 @@ const style = {
   p: 4,
 };
 
-const AddField = ()=>{
+const AddField = ({checkBoxInfo, setCheckBoxInfo})=>{
     const [modalOpen,setModalOpen] = useState(false)
     const handleOpen =  ()=> setModalOpen(true)
     const handleClose = ()=> setModalOpen(false)
@@ -31,8 +31,14 @@ const AddField = ()=>{
                 onClose ={handleClose}
             >
                 <Box sx={style}>
-                    <Typography>Section Names</Typography>
-                    <CheckBoxGroups/>
+                    <Typography>Select Fields</Typography>
+                    {
+                        checkBoxInfo
+                        ?
+                        <CheckBoxGroups checkBoxInfo={checkBoxInfo} setCheckBoxInfo={setCheckBoxInfo}/>
+                        :
+                        <h6>Loading...</h6>
+                    }
                 </Box>
             </Modal>
         </div>

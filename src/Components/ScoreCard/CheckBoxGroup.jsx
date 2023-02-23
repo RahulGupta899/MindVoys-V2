@@ -1,3 +1,114 @@
+import React, { useState } from 'react';
+import { Checkbox, FormControlLabel, FormGroup, Box } from '@mui/material';
+
+function CheckBoxGroup({checkBoxInfo, setCheckBoxInfo}) {
+  
+
+  const handleChange = (event) => {
+    console.log(event.target.name)
+    console.log(event.target.value)
+    const parentIndex = checkBoxInfo.findIndex((item) => item.name === event.target.name);
+    const childIndex = checkBoxInfo[parentIndex].children.findIndex((item) => item.name === event.target.value);
+
+    if (childIndex > -1) {
+      // Child checkbox was clicked
+      const updatedChildren = [...checkBoxInfo[parentIndex].children];
+      updatedChildren[childIndex].checked = event.target.checked;
+
+      const updatedState = [...checkBoxInfo];
+      updatedState[parentIndex].children = updatedChildren;
+
+      setCheckBoxInfo(updatedState);
+    } else {
+      // Parent checkbox was clicked
+      const updatedState = [...checkBoxInfo];
+      updatedState[parentIndex].checked = event.target.checked;
+
+      updatedState[parentIndex].children.forEach((child) => {
+        child.checked = event.target.checked;
+      });
+
+      setCheckBoxInfo(updatedState);
+    }
+  };
+
+  return (
+    <FormGroup>
+      {checkBoxInfo.map((parent) => (
+        <React.Fragment key={parent.name}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={parent.checked}
+                onChange={handleChange}
+                name={parent.name}
+              />
+            }
+            label={parent.name}
+          />
+          <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+            <FormGroup>
+                {parent.children.map((child) => (
+                <FormControlLabel
+                    key={child.name}
+                    control={
+                    <Checkbox
+                        checked={child.checked}
+                        onChange={handleChange}
+                        name={parent.name}
+                        value={child.name}
+                    />
+                    }
+                    label={child.name}
+                />
+                ))}
+            </FormGroup>
+          </Box>
+          
+        </React.Fragment>
+      ))}
+    </FormGroup>
+  );
+}
+
+export default CheckBoxGroup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // import React,{useState,useEffect,useCallback} from 'react';
 // import Box from '@mui/material/Box';
 // import Checkbox from '@mui/material/Checkbox';
@@ -14,6 +125,98 @@
 //         tags:["tag5", "tag6"]
 //     }
 // ]
+
+
+// const CheckBoxGroup = ()=>{
+//     const [sections,setSections] = useState(null)
+//     const [checkBoxes,setCheckBoxes] = useState(null)
+
+//     console.log("SECTIONS: ",sections)
+
+//     useEffect(()=>{
+//         (async ()=>{
+//             const data = [
+//                 {
+//                     sectionName: 'section1',
+//                     tags:["tag1", "tag2", "tag3", "tag4"]
+//                 }, 
+//                 {
+//                     sectionName: 'section2',
+//                     tags:["tag5", "tag6"]
+//                 }
+//             ]
+//             setSections(data);
+//         })()
+//     },[])
+
+//     const handleSectionChange = (e,sectionName)=>{
+//         console.log(sectionName+": ",e.target.checked)
+//     }
+
+//     const handleTagChange = (e,tagName,sectionName)=>{
+//         if(e.target.checked){
+//             // Add the tag from checkboxes
+//         }
+//         else{
+//             // Remove the tag from checkboxes
+//         }
+        
+//     }
+
+//     return(
+//         <div>
+//             {
+//                 sections
+//                 ?
+//                 sections.map((section,idx)=>{
+//                                         return (
+//                                             <>
+//                                                 <FormControlLabel
+//                                                     key={idx}
+//                                                     label = {section.sectionName}
+//                                                     control={<Checkbox 
+//                                                                 checked={true} 
+//                                                                 indeterminate={false} 
+//                                                                 onChange={(e)=>{handleSectionChange(e,section.sectionName)}} 
+//                                                             />}
+//                                                 />
+
+//                                                 <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+//                                                     {
+//                                                         section.tags.map((tag)=>{
+//                                                             return (
+//                                                                 <FormControlLabel
+//                                                                     label= {tag}
+//                                                                     control={<Checkbox 
+//                                                                                 checked={true} 
+//                                                                                 onChange={(e)=>{handleTagChange(e,tag,section.sectionName)}} 
+//                                                                             />}
+//                                                                 />
+//                                                             )
+//                                                         })
+//                                                     }                            
+//                                                 </Box>
+
+//                                             </>
+//                                         )
+//                             })
+//                 :
+//                 <h6>Loading...</h6>
+//             }
+//         </div>
+//     )
+// }
+// export default CheckBoxGroup;
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -172,76 +375,76 @@
 
 
 
-import { Fragment, useState } from "react";
-import Box from "@mui/material/Box";
-import Checkbox from "@mui/material/Checkbox";
-import { Card } from "@mui/material";
+// import { Fragment, useState } from "react";
+// import Box from "@mui/material/Box";
+// import Checkbox from "@mui/material/Checkbox";
+// import { Card } from "@mui/material";
 
-const estudiantes = [
-  { uid: 1, label: "Student 1" },
-  { uid: 2, label: "Student 2" },
-  { uid: 3, label: "Student 3" }
-];
+// const estudiantes = [
+//   { uid: 1, label: "Student 1" },
+//   { uid: 2, label: "Student 2" },
+//   { uid: 3, label: "Student 3" }
+// ];
 
-const CheckBoxGroup = () => {
-  const [checkedStudents, setCheckedStudents] = useState([]);
+// const CheckBoxGroup = () => {
+//   const [checkedStudents, setCheckedStudents] = useState([]);
 
-  const handleChange1 = (isChecked) => {
-    if (isChecked)
-      return setCheckedStudents(
-        estudiantes.map((estudiante) => estudiante.uid)
-      );
-    else setCheckedStudents([]);
-  };
+//   const handleChange1 = (isChecked) => {
+//     if (isChecked)
+//       return setCheckedStudents(
+//         estudiantes.map((estudiante) => estudiante.uid)
+//       );
+//     else setCheckedStudents([]);
+//   };
 
-  const handleChange2 = (isChecked, uid) => {
-    const index = checkedStudents.indexOf(uid);
+//   const handleChange2 = (isChecked, uid) => {
+//     const index = checkedStudents.indexOf(uid);
 
-    // The checked value is altered before the state changes for some reason is not a trully controlled component
-    // So the next conditions are INVERTED.
+//     // The checked value is altered before the state changes for some reason is not a trully controlled component
+//     // So the next conditions are INVERTED.
 
-    if (isChecked) return setCheckedStudents((state) => [...state, uid]);
+//     if (isChecked) return setCheckedStudents((state) => [...state, uid]);
 
-    if (!isChecked && index > -1)
-      return setCheckedStudents((state) => {
-        state.splice(index, 1);
-        return JSON.parse(JSON.stringify(state)); // Here's the trick => React does not update the f* state array changes even with the spread operator, the reference is still the same.
-      });
-  };
+//     if (!isChecked && index > -1)
+//       return setCheckedStudents((state) => {
+//         state.splice(index, 1);
+//         return JSON.parse(JSON.stringify(state)); // Here's the trick => React does not update the f* state array changes even with the spread operator, the reference is still the same.
+//       });
+//   };
 
-  return (
-    <Fragment>
-      {/* Parent */}
+//   return (
+//     <Fragment>
+//       {/* Parent */}
 
-      <Checkbox
-        checked={checkedStudents.length === estudiantes.length}
-        indeterminate={
-          checkedStudents.length !== estudiantes.length &&
-          checkedStudents.length > 0
-        }
-        onChange={(event) => handleChange1(event.target.checked)}
-      />
+//       <Checkbox
+//         checked={checkedStudents.length === estudiantes.length}
+//         indeterminate={
+//           checkedStudents.length !== estudiantes.length &&
+//           checkedStudents.length > 0
+//         }
+//         onChange={(event) => handleChange1(event.target.checked)}
+//       />
 
-      {/* Childrens */}
-      <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-        {checkedStudents &&
-          estudiantes.map((estudiante) => (
-            <Checkbox
-              key={estudiante.uid}
-              checked={checkedStudents.includes(estudiante.uid)}
-              onChange={(event) =>
-                handleChange2(event.target.checked, estudiante.uid)
-              }
-              inputProps={{ "aria-label": "controlled" }}
-            />
-          ))}
-      </Box>
+//       {/* Childrens */}
+//       <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+//         {checkedStudents &&
+//           estudiantes.map((estudiante) => (
+//             <Checkbox
+//               key={estudiante.uid}
+//               checked={checkedStudents.includes(estudiante.uid)}
+//               onChange={(event) =>
+//                 handleChange2(event.target.checked, estudiante.uid)
+//               }
+//               inputProps={{ "aria-label": "controlled" }}
+//             />
+//           ))}
+//       </Box>
 
-      <h3>ID's: {JSON.stringify(checkedStudents)}</h3>
-    </Fragment>
-  );
-};
+//       <h3>ID's: {JSON.stringify(checkedStudents)}</h3>
+//     </Fragment>
+//   );
+// };
 
-export default CheckBoxGroup;
+// export default CheckBoxGroup;
 
 

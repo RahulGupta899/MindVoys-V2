@@ -1159,6 +1159,13 @@ animation-delay: .8s;
   color: #ffffff;
 }
 
-
-
+.section_header{
+  background: rgb(157, 218, 205);
+  padding: 3px;
+  border-radius: 3px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
 
