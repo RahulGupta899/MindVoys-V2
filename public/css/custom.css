@@ -162,7 +162,7 @@ body::-webkit-scrollbar-thumb {
   background-color: transparent;
   padding: 17px 16px;
   display: block;
-  border-radius: 14px 14px 0 0;
+  border-radius: 9px 9px 0 0;
 }
 .nav_area ul li a.active
 {
@@ -918,7 +918,7 @@ body::-webkit-scrollbar-thumb {
   padding:1px 6px !important;
   box-shadow:none !important;
 }
-.audio_player_bottom .css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root
+.audio_player_bottom .MuiButtonBase-root
 {
   line-height: 1;
   padding: 4px 14px;
@@ -1072,11 +1072,12 @@ animation-delay: .8s;
 {
   padding-right: 7px;
 }
-.score_accordian .css-1betqn-MuiAccordionSummary-content
+.score_accordian .MuiAccordionSummary-content
+
 {
   margin: 9px 0;
 }
-.score_accordian .css-d75ddq-MuiButtonBase-root-MuiAccordionSummary-root
+.score_accordian .MuiAccordionSummary-root
 {
   min-height: 40px !important;
   border-radius: 4px;
@@ -1125,7 +1126,8 @@ animation-delay: .8s;
 .score_accordian .css-15v22id-MuiAccordionDetails-root
 {
 }
-.score_accordian .css-1wc0u5o-MuiPaper-root-MuiAccordion-root:before
+.score_accordian .css-1wc0u5o-MuiPaper-root-MuiAccordion-root:before,
+.score_accordian .css-v464i3::before  
 {
   display: none !important;
 }
@@ -1134,7 +1136,8 @@ animation-delay: .8s;
   font-size: 14px;
 }
 .score_accordian .css-ns9v14-MuiTypography-root,
-.score_accordian .css-ahj2mt-MuiTypography-root
+.score_accordian .MuiTypography-body1,
+.score_accordian .acc_card_score 
 {
   font-size: 14px;
 }
@@ -1168,4 +1171,17 @@ animation-delay: .8s;
   align-items: center;
   display: flex;
 }
+
+.tag_header{
+  background: rgb(64, 141, 241);
+  padding: 2px;
+  border-radius: 3px;
+  height: 30px;
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+
 

@@ -16,6 +16,8 @@ const style = {
   borderRadius: '5px',
   boxShadow: 20,
   p: 4,
+  height: 500,
+  overflowY: 'scroll'
 };
 
 const AddField = ({checkBoxInfo, setCheckBoxInfo})=>{

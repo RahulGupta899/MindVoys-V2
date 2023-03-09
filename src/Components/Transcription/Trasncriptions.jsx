@@ -303,7 +303,6 @@ const Trasncriptions = ({value})=>{
         setSearchText("")
     }
 
-
     //  IF ANY CALL WILL BE CLICKED THIS STATE WILL GET UPDATED (PASSED AS PROP IN INSPECT CALL COMPONENT)
     const [callId,setCallId] = useState(null) 
 
@@ -376,7 +375,6 @@ const Trasncriptions = ({value})=>{
                                         onPageChange={(newPage) => setPageState(old=>({...old,page:newPage}))}
                                         onPageSizeChange={(newPageSize) => setPageState(old=>({...old, pageSize:newPageSize}))}
                                         columns={columns}
-                                        // columnVisibilityModel={{callDate: false}}
                                     />
                                     :
                                     <DataGrid

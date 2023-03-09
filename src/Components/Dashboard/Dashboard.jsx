@@ -8,7 +8,7 @@ import { API_EndPoints } from '../../Helper/API_EndPoints'
 import axios from 'axios'
 
 const Dashboard = (props) => {
-    console.log("DASHBOARD COMPONENT")
+
     // FILTER STATES
     const {value} = props
     const {
@@ -23,7 +23,6 @@ const Dashboard = (props) => {
     
     // DASHBOARD STATE
     const [dashboardData,setDashboardData] = useState(null)
-    console.log("DASHBOARD: ",dashboardData)
 
     // FETCH DASHBOARD DATA 
     useEffect(() => {
